@@ -1,78 +1,84 @@
-<div style="font-family: Arial, sans-serif; background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; padding: 20px; box-sizing: border-box;">
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evoke Tour - Partner Login</title>
+  <!-- Supabase Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="font-family: Arial, sans-serif; background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; padding: 20px; box-sizing: border-box;">
   
   <div style="background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center;">
     
-    <h1 style="color: #00838f; margin-bottom: 10px; font-size: 28px; font-weight: 900; letter-spacing: 1px;">Evoke Tour</h1>
-    <p style="color: #555; margin-bottom: 30px; font-size: 15px; font-weight: bold;">પાર્ટનર લોગીન 🔒</p>
+    <h1 style="color: #00838f; margin-bottom: 5px; font-size: 28px; font-weight: 900;">Evoke Tour</h1>
+    <p style="color: #555; margin-bottom: 25px; font-size: 16px; font-weight: bold;">પાર્ટનર લોગિન 🔐</p>
 
-    <!-- લોગીન ફોર્મ -->
     <form id="loginForm" onsubmit="loginPartner(event)">
-      
-      <div style="text-align: left; margin-bottom: 20px;">
-        <label style="display: block; color: #333; font-weight: bold; margin-bottom: 8px;">મોબાઈલ નંબર (Mobile Number)</label>
-        <input type="tel" id="mobile" required placeholder="તમારો 10 આંકડાનો નંબર નાખો" pattern="[0-9]{10}" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; outline: none;">
+      <div style="text-align: left; margin-bottom: 15px;">
+        <label style="display: block; color: #333; font-weight: bold; margin-bottom: 5px;">મોબાઈલ નંબર (Mobile Number)</label>
+        <input type="tel" id="login_mobile" required placeholder="10 આંકડાનો નંબર" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; outline: none;">
       </div>
 
       <div style="text-align: left; margin-bottom: 25px;">
-        <label style="display: block; color: #333; font-weight: bold; margin-bottom: 8px;">પાસવર્ડ (Password)</label>
-        <input type="password" id="password" required placeholder="તમારો પાસવર્ડ નાખો" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; outline: none;">
+        <label style="display: block; color: #333; font-weight: bold; margin-bottom: 5px;">પાસવર્ડ (Password)</label>
+        <input type="password" id="login_password" required placeholder="પાસવર્ડ દાખલ કરો" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; outline: none;">
       </div>
 
-      <button type="submit" style="width: 100%; background-color: #ff9800; color: white; padding: 14px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(255, 152, 0, 0.3); transition: background-color 0.3s;">
-        લોગીન કરો (Login)
+      <button type="submit" style="width: 100%; background-color: #ff9800; color: white; padding: 14px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(255, 152, 0, 0.3);">
+        લોગિન (Login)
       </button>
-
     </form>
-    
+
     <div style="margin-top: 20px;">
-      <a href="#" style="color: #00838f; text-decoration: none; font-size: 14px; font-weight: bold;">પાસવર્ડ ભૂલી ગયા છો?</a>
+      <p style="font-size: 14px; color: #666;">નવું એકાઉન્ટ બનાવવું છે? <a href="register.html" style="color: #00838f; text-decoration: none; font-weight: bold;">ه્યાં રજીસ્ટર કરો</a></p>
     </div>
-
   </div>
-</div>
 
-<!-- Supabase Library -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- આપણો લોગિન કોડ (બધું એક જ જગ્યાએ) -->
-<script>
-  const supabaseUrl = 'https://imggtidezvfxxpovftyx.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltZ2d0aWRlenZmeHhwb3ZmdHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwMzk2MDQsImV4cCI6MjEwMjYxNTYwNH0.R386PRqplXZeJsAZk_kLgCi-MDGzOeaoVdHAB7TGiJ8';
-  
-  const myDb = supabase.createClient(supabaseUrl, supabaseKey);
-
-  async function loginPartner(event) {
-    event.preventDefault(); // પેજને રિફ્રેશ થતું રોકશે
+  <script>
+    const supabaseUrl = 'https://imggtidezvfxxpovftyx.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltZ2d0aWRlenZmeHhwb3ZmdHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwMzk2MDQsImV4cCI6MjEwMjYxNTYwNH0.R386PRqplXZeJsAZk_kLgCi-MDGzOeaoVdHAB7TGiJ8';
     
-    const mobileInput = document.getElementById('mobile').value;
-    const passwordInput = document.getElementById('password').value;
-    const submitBtn = document.querySelector('button[type="submit"]');
-    
-    const originalText = submitBtn.innerText;
-    submitBtn.innerText = 'ચેક કરી રહ્યા છીએ... ⏳';
+    const myDb = supabase.createClient(supabaseUrl, supabaseKey);
 
-    try {
-      const { data, error } = await myDb
-        .from('users') 
-        .select('*')
-        .eq('mobile_number', mobileInput)
-        .eq('password', passwordInput);
+    async function loginPartner(event) {
+      event.preventDefault();
+      
+      const submitBtn = document.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerText;
+      submitBtn.innerText = 'તપાસ કરી રહ્યા છીએ... ⏳';
 
-      if (error) {
-        alert("❌ સર્વરમાં કોઈ ખામી છે: " + error.message);
-      } else if (data && data.length > 0) {
-        const loggedInUser = data[0];
-        localStorage.setItem('evokeUser', JSON.stringify(loggedInUser));
-        alert("✅ સફળતાપૂર્વક લોગીન! Evoke Tour ના ડેશબોર્ડમાં આપનું સ્વાગત છે, " + loggedInUser.name);
-        window.location.href = "dashboard.html";
-        
-      } else {
-        alert("❌ તમારો મોબાઈલ નંબર અથવા પાસવર્ડ ખોટો છે! કૃપા કરીને ફરીથી પ્રયત્ન કરો.");
+      const mobile = document.getElementById('login_mobile').value;
+      const password = document.getElementById('login_password').value;
+
+      try {
+        const { data, error } = await myDb
+          .from('users')
+          .select('*')
+          .eq('mobile_number', mobile)
+          .eq('password', password);
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          const loggedInUser = data[0];
+          
+          // ડેટા બ્રાઉઝરમાં સેવ કરો
+          localStorage.setItem('evokeUser', JSON.stringify(loggedInUser));
+          
+          alert("✅ સફળતાપૂર્વક લોગિન! Evoke Tour ના ડેશબોર્ડમાં આપનું સ્વાગત છે, " + loggedInUser.name);
+          
+          // સીધા ડેશબોર્ડ પર મોકલો (કોઈ જ પૉપ-અપ વગર!)
+          window.location.href = "dashboard.html";
+        } else {
+          alert("❌ ખોટો મોબાઈલ નંબર અથવા પાસવર્ડ!");
+        }
+      } catch (err) {
+        alert("❌ લોગિન એરર: " + err.message);
       }
-    } catch (err) {
-      alert("❌ ભૂલ: " + err.message);
+      
+      submitBtn.innerText = originalText;
     }
-    
-    submitBtn.innerText = originalText;
-  }
-</script>
+  </script>
+</body>
+</html>
