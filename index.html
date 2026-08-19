@@ -64,7 +64,8 @@
         const loggedInUser = data[0];
         localStorage.setItem('evokeUser', JSON.stringify(loggedInUser));
         alert("✅ સફળતાપૂર્વક લોગીન! Evoke Tour ના ડેશબોર્ડમાં આપનું સ્વાગત છે, " + loggedInUser.name);
-        window.open("https://codepen.io/editor/evoketour/pen/01a018c0-0bad-74c7-b65e-5fad9ddd29d1", "_blank");
+        window.location.href = "dashboard.html";
+        
       } else {
         alert("❌ તમારો મોબાઈલ નંબર અથવા પાસવર્ડ ખોટો છે! કૃપા કરીને ફરીથી પ્રયત્ન કરો.");
       }
