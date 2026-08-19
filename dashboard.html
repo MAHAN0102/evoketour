@@ -30,9 +30,8 @@
      <h3 style="color: #1e3c72; margin-top: 0; font-size: 20px;">🔗 તમારી રેફરલ લિંક</h3>
      <p style="color: #666; font-size: 14px; margin-bottom: 20px;">આ લિંક તમારા મિત્રોને મોકલો અને જે પણ વ્યક્તિ તમારી ટીમમાં આવશે, તેનું કમિશન તમને મળશે.</p>
      <div style="display: flex; gap: 10px; margin-top: 15px;">
-        <!-- અહી તમારી શોર્ટ લિંક મુકેલી છે -->
-        <input type="text" id="referralLink" value="<input type="text" id="referralLink" readonly style="flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; background-color: #f9f9f9; color: #333; outline: none;">
-       " readonly style="flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; background-color: #f9f9f9; color: #333; outline: none;">
+        <!-- અહીં ઓટોમેટિક લિંક આવશે -->
+        <input type="text" id="referralLink" readonly style="flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; background-color: #f9f9f9; color: #333; outline: none;">
      </div>
   </div>
 
@@ -68,69 +67,27 @@
         const savedData = localStorage.getItem('evokeUser');
         if(savedData) {
             const user = JSON.parse(savedData);
+            
+            // નામ સેટ થશે
             document.getElementById('partnerName').innerText = user.name;
-            if(user.user_id_code) {
-                document.getElementById('partnerId').innerText = "ID: " + user.user_id_code;
+            
+            // ID સેટ થશે
+            const userId = user.sponsor_id || user.user_id_code;
+            if(userId) {
+                document.getElementById('partnerId').innerText = "ID: " + userId;
+                
+                // તમારી ફાઇનલ લાઈવ રેફરલ લિંક અહીં ઓટોમેટિક બની જશે
+                const refLink = "https://evoketour.vercel.app/register.html?ref=" + userId;
+                document.getElementById('referralLink').value = refLink;
             } else {
                 document.getElementById('partnerId').innerText = "ID: પ્રોસેસમાં છે";
+                document.getElementById('referralLink').value = "લિંક જનરેટ થઈ રહી છે...";
             }
         } else {
             alert("કૃપા કરીને પહેલા લોગિન કરો.");
-            // ભવિષ્યમાં જો કોઈ લોગિન વગર સીધું ડેશબોર્ડ ખોલે, તો તેને પાછો index.html પર મોકલવા માટે
-            // window.location.href = "index.html"; 
+            window.location.href = "index.html"; 
         }
     });
   </script>
 </body>
 </html>
-
-    <!-- JavaScript -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const savedData = localStorage.getItem('evokeUser');
-        if(savedData) {
-            const user = JSON.parse(savedData);
-            document.getElementById('partnerName').innerText = user.name;
-            
-            if(user.user_id_code) {
-                document.getElementById('partnerId').innerText = "ID: " + user.user_id_code;
-                
-                // ઓટોમેટિક લિંક બનાવવાનો ફાઇનલ કોડ 
-                const refLink = "https://your-website.com/register.html?ref=" + user.user_id_code;
-                document.getElementById('referralLink').value = refLink;
-                
-            } else {
-                document.getElementById('partnerId').innerText = "ID: પ્રોસેસમાં છે";
-                document.getElementById('referralLink').value = "લિંક જનરેટ થઈ રહી છે...";
-            }
-        } else {
-            alert("કૃપા કરીને પહેલા લોગિન કરો.");
-        }
-    });
-    <!-- JavaScript -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const savedData = localStorage.getItem('evokeUser');
-        if(savedData) {
-            const user = JSON.parse(savedData);
-            document.getElementById('partnerName').innerText = user.name;
-            
-            if(user.user_id_code) {
-                document.getElementById('partnerId').innerText = "ID: " + user.user_id_code;
-                
-                // તમારી ફાઇનલ લાઈવ લિંક અહીં સેટ થઈ ગઈ છે!
-                const refLink = "https://evoketour.vercel.app/register.html?ref=" + user.user_id_code;
-                document.getElementById('referralLink').value = refLink;
-                
-            } else {
-                document.getElementById('partnerId').innerText = "ID: પ્રોસેસમાં છે";
-                document.getElementById('referralLink').value = "લિંક જનરેટ થઈ રહી છે...";
-            }
-        } else {
-            alert("કૃપા કરીને પહેલા લોગિન કરો.");
-        }
-    });
-  </script>
-
-
-  
