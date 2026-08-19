@@ -92,5 +92,22 @@
         }
     });
   </script>
+    function shareOnWhatsApp() {
+    const link = document.getElementById('referralLink').value;
+    const message = "નમસ્તે! Evoke Tour માં જોડાઈને બિઝનેસ શરૂ કરવા માટે નીચેની લિંક પર ક્લિક કરો: " + link;
+    
+    // આ લેટેસ્ટ 'Web Share API' છે જે સીધું WhatsApp ખોલશે
+    if (navigator.share) {
+      navigator.share({
+        title: 'Evoke Tour Partner',
+        text: message,
+        url: link,
+      }).catch(console.error);
+    } else {
+      // જો શેરિંગ સપોર્ટ ન કરે તો WhatsApp લિંક ખોલશે
+      window.location.href = "https://wa.me/?text=" + encodeURIComponent(message);
+    }
+  }
+  
 </body>
 </html>
