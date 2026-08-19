@@ -14,11 +14,9 @@
       <p style="margin: 5px 0 0; font-size: 14px; opacity: 0.9;">પાર્ટનર ડેશબોર્ડ (Partner Dashboard)</p>
     </div>
     <div style="background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 8px; font-weight: bold;">
-      <!-- નામ બતાવવા માટેની જગ્યા -->
       <p style="color: #ffffff; margin-bottom: 5px; font-size: 16px; margin-top: 0;">
         સ્વાગત છે, <strong id="partnerName">પાર્ટનર</strong>!
       </p>
-      <!-- ID બતાવવા માટેની જગ્યા -->
       <div id="partnerId" style="background-color: #ffffff; color: #1e3c72; display: inline-block; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 14px;">
         ID: લોડ થઈ રહ્યું છે...
       </div>
@@ -30,12 +28,11 @@
      <h3 style="color: #1e3c72; margin-top: 0; font-size: 20px;">🔗 તમારી રેફરલ લિંક</h3>
      <p style="color: #666; font-size: 14px; margin-bottom: 20px;">આ લિંક તમારા મિત્રોને મોકલો અને જે પણ વ્યક્તિ તમારી ટીમમાં આવશે, તેનું કમિશન તમને મળશે.</p>
      <div style="display: flex; gap: 10px; margin-top: 15px;">
-        <!-- અહીં ઓટોમેટિક લિંક આવશે -->
         <input type="text" id="referralLink" readonly style="flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; background-color: #f9f9f9; color: #333; outline: none;">
      </div>
   </div>
 
-  <!-- Stats Section (Earnings & Team) -->
+  <!-- Stats Section -->
   <div style="display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap;">
     <div style="flex: 1; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); padding: 20px; border-radius: 12px; color: white; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); min-width: 140px;">
       <h3 style="margin: 0; font-size: 16px; opacity: 0.9;">કુલ કમાણી (Earnings)</h3>
@@ -50,36 +47,26 @@
   <!-- Marketing & Promotion Hub -->
   <div style="background: white; padding: 25px; border-radius: 12px; margin-top: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center;">
     <h3 style="color: #1e3c72; margin-top: 0; font-size: 20px;">પ્રમોશનલ મટીરીયલ (Marketing Tools) 📢</h3>
-    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">તમારા બિઝનેસને ઝડપથી વધારવા માટે નીચે આપેલા પોસ્ટર અને લિંક તમારા મિત્રો સાથે શેર કરો.</p>
+    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">તમારા બિઝનેસને ઝડપથી વધારવા માટે નીચે આપેલું બટન દબાવીને સીધા WhatsApp પર લિંક શેર કરો.</p>
     <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-      <button style="background-color: #25D366; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 15px; box-shadow: 0 4px 6px rgba(37, 211, 102, 0.3);">
-        <button onclick="shareOnWhatsApp()" style="background-color: #25D366; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 15px; box-shadow: 0 4px 6px rgba(37, 211, 102, 0.3);">
-  WhatsApp પર શેર કરો 💬
-        </button>
-        
-      </button>
-      <button style="background-color: #00838f; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; box-shadow: 0 4px 6px rgba(0, 131, 143, 0.3);">
-        ઇન્વિટેશન પોસ્ટર ડાઉનલોડ કરો 📥
+      <!-- WhatsApp Share Button -->
+      <button onclick="shareOnWhatsApp()" style="background-color: #25D366; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 15px; box-shadow: 0 4px 6px rgba(37, 211, 102, 0.3);">
+        WhatsApp પર શેર કરો 💬
       </button>
     </div>
   </div>
 
-  <!-- JavaScript -->
+  <!-- JavaScript Section -->
   <script>
     document.addEventListener("DOMContentLoaded", function() {
         const savedData = localStorage.getItem('evokeUser');
         if(savedData) {
             const user = JSON.parse(savedData);
-            
-            // નામ સેટ થશે
             document.getElementById('partnerName').innerText = user.name;
             
-            // ID સેટ થશે
-            const userId = user.sponsor_id || user.user_id_code;
+            const userId = user.user_id_code || user.sponsor_id; 
             if(userId) {
                 document.getElementById('partnerId').innerText = "ID: " + userId;
-                
-                // તમારી ફાઇનલ લાઈવ રેફરલ લિંક અહીં ઓટોમેટિક બની જશે
                 const refLink = "https://evoketour.vercel.app/register.html?ref=" + userId;
                 document.getElementById('referralLink').value = refLink;
             } else {
@@ -91,26 +78,8 @@
             window.location.href = "index.html"; 
         }
     });
-  </script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const savedData = localStorage.getItem('evokeUser');
-        if(savedData) {
-            const user = JSON.parse(savedData);
-            document.getElementById('partnerName').innerText = user.name;
-            const userId = user.user_id_code || user.sponsor_id; 
-            if(userId) {
-                document.getElementById('partnerId').innerText = "ID: " + userId;
-                const refLink = "https://evoketour.vercel.app/register.html?ref=" + userId;
-                document.getElementById('referralLink').value = refLink;
-            }
-        } else {
-            alert("કૃપા કરીને પહેલા લોગિન કરો.");
-            window.location.href = "index.html"; 
-        }
-    });
 
-    // WhatsApp Share Function
+    // WhatsApp Direct Share Function
     function shareOnWhatsApp() {
         const link = document.getElementById('referralLink').value;
         const message = "નમસ્તે! Evoke Tour માં જોડાઈને બિઝનેસ શરૂ કરવા માટે નીચેની લિંક પર ક્લિક કરો: " + link;
@@ -127,8 +96,5 @@
     }
   </script>
 </body>
-</html>
-
-  
-</body>
-</html>
+    </html>
+    
