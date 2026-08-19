@@ -83,6 +83,7 @@
 </body>
 </html>
 
+    <!-- JavaScript -->
   <script>
     document.addEventListener("DOMContentLoaded", function() {
         const savedData = localStorage.getItem('evokeUser');
@@ -93,8 +94,7 @@
             if(user.user_id_code) {
                 document.getElementById('partnerId').innerText = "ID: " + user.user_id_code;
                 
-                // ઓટોમેટિક લિંક બનાવવાનો કોડ 
-                // (અહીં 'your-website.com' ની જગ્યાએ આપણે Vercel ની સાચી લિંક મૂકીશું)
+                // ઓટોમેટિક લિંક બનાવવાનો ફાઇનલ કોડ 
                 const refLink = "https://your-website.com/register.html?ref=" + user.user_id_code;
                 document.getElementById('referralLink').value = refLink;
                 
@@ -104,8 +104,8 @@
             }
         } else {
             alert("કૃપા કરીને પહેલા લોગિન કરો.");
-            // window.location.href = "index.html"; 
         }
     });
   </script>
+
   
