@@ -105,3 +105,68 @@
   </script>
 </body>
 </html>
+<script>
+  const supabaseUrl = 'https://imggtidezvfxxpovftyx.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltZ2d0aWRlenZmeHhwb3ZmdHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwMzk2MDQsImV4cCI6MjEwMjYxNTYwNH0.R386PRqplXZeJsAZk_kLgCi-MDGzOeaoVdHAB7TGiJ8';
+  
+  const myDb = supabase.createClient(supabaseUrl, supabaseKey);
+
+  // જાદુઈ કોડ: પેજ લોડ થાય ત્યારે URL માંથી 'ref' (સ્પોન્સર ID) શોધો અને બોક્સમાં ભરી દો
+  window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const refId = urlParams.get('ref');
+    
+    if (refId) {
+      const sponsorInput = document.getElementById('sponsor_id');
+      sponsorInput.value = refId; // બોક્સમાં ઓટોમેટિક ID લખાઈ જશે
+      sponsorInput.readOnly = true; // યુઝર તેને બદલી નહીં શકે
+      sponsorInput.style.backgroundColor = "#e9ecef"; // કલર થોડો ગ્રે થશે જેથી ખબર પડે કે આ ફિક્સ છે
+    }
+  };
+
+  async function registerPartner(event) {
+    event.preventDefault();
+    
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerText;
+    submitBtn.innerText = 'પ્રોસેસ થઈ રહ્યું છે... ⏳';
+
+    const sponsorId = document.getElementById('sponsor_id').value;
+    const fullName = document.getElementById('full_name').value;
+    const mobile = document.getElementById('mobile').value;
+    const password = document.getElementById('password').value;
+
+    try {
+      const { data: existingUser, error: checkError } = await myDb
+        .from('users')
+        .select('mobile_number')
+        .eq('mobile_number', mobile);
+      
+      if (checkError) throw checkError;
+
+      if (existingUser && existingUser.length > 0) {
+        alert("❌ આ મોબાઈલ નંબર પહેલેથી જ રજીસ્ટર થયેલો છે. કૃપા કરીને લોગિન કરો.");
+        submitBtn.innerText = originalText;
+        return;
+      }
+
+      const { data, error } = await myDb
+        .from('users')
+        .insert([
+          { sponsor_id: sponsorId, name: fullName, mobile_number: mobile, password: password }
+        ]);
+
+      if (error) {
+        alert("❌ રજીસ્ટ્રેશનમાં ભૂલ: " + error.message);
+      } else {
+        alert("✅ સફળતાપૂર્વક રજીસ્ટ્રેશન થઈ ગયું છે! હવે તમે લોગિન કરી શકો છો.");
+        window.location.href = "index.html"; 
+      }
+    } catch (err) {
+      alert("❌ સર્વર એરર: " + err.message);
+    }
+    
+    submitBtn.innerText = originalText;
+  }
+</script>
+
