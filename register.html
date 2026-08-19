@@ -169,4 +169,17 @@
     submitBtn.innerText = originalText;
   }
 </script>
+  <script>
+    // URL માંથી ?ref= કોડ ઓટોમેટિક વાંચીને સ્પોન્સર આઈડીના ખાનામાં મુકવા માટે
+    window.addEventListener('DOMContentLoaded', (event) => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const refId = urlParams.get('ref');
+        if (refId) {
+            const sponsorInput = document.getElementById('sponsor_id'); // અથવા તમારા ફોર્મના ઇનપુટનું ID
+            if (sponsorInput) {
+                sponsorInput.value = refId;
+            }
+        }
+    });
+  </script>
 
