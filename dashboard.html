@@ -92,22 +92,43 @@
         }
     });
   </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const savedData = localStorage.getItem('evokeUser');
+        if(savedData) {
+            const user = JSON.parse(savedData);
+            document.getElementById('partnerName').innerText = user.name;
+            const userId = user.user_id_code || user.sponsor_id; 
+            if(userId) {
+                document.getElementById('partnerId').innerText = "ID: " + userId;
+                const refLink = "https://evoketour.vercel.app/register.html?ref=" + userId;
+                document.getElementById('referralLink').value = refLink;
+            }
+        } else {
+            alert("કૃપા કરીને પહેલા લોગિન કરો.");
+            window.location.href = "index.html"; 
+        }
+    });
+
+    // WhatsApp Share Function
     function shareOnWhatsApp() {
-    const link = document.getElementById('referralLink').value;
-    const message = "નમસ્તે! Evoke Tour માં જોડાઈને બિઝનેસ શરૂ કરવા માટે નીચેની લિંક પર ક્લિક કરો: " + link;
-    
-    // આ લેટેસ્ટ 'Web Share API' છે જે સીધું WhatsApp ખોલશે
-    if (navigator.share) {
-      navigator.share({
-        title: 'Evoke Tour Partner',
-        text: message,
-        url: link,
-      }).catch(console.error);
-    } else {
-      // જો શેરિંગ સપોર્ટ ન કરે તો WhatsApp લિંક ખોલશે
-      window.location.href = "https://wa.me/?text=" + encodeURIComponent(message);
+        const link = document.getElementById('referralLink').value;
+        const message = "નમસ્તે! Evoke Tour માં જોડાઈને બિઝનેસ શરૂ કરવા માટે નીચેની લિંક પર ક્લિક કરો: " + link;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: 'Evoke Tour Partner',
+                text: message,
+                url: link,
+            }).catch(console.error);
+        } else {
+            window.open("https://wa.me/?text=" + encodeURIComponent(message), "_blank");
+        }
     }
-  }
+  </script>
+</body>
+</html>
+
   
 </body>
 </html>
