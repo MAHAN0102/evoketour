@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evoke Tour - Partner Dashboard</title>
+    <title>Evoke Tour - Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
@@ -32,15 +32,13 @@
             padding: 20px;
             text-align: center;
             border-bottom: 4px solid #d4af37;
-            position: relative;
         }
 
         .header h1 { margin: 0; font-size: 22px; letter-spacing: 1px; color: #f4e8c1; }
-        .menu-icon { position: absolute; right: 20px; top: 22px; cursor: pointer; font-size: 20px; color: #d4af37; }
 
         .content { padding: 15px; }
 
-        /* Profile & Status Card */
+        /* Profile Card */
         .profile-card {
             background: linear-gradient(135deg, #ff7e5f, #feb47b);
             color: white;
@@ -50,8 +48,9 @@
             text-align: center;
             box-shadow: 0 5px 15px rgba(255, 126, 95, 0.3);
         }
-        .profile-card h2 { margin: 0 0 5px; font-size: 22px; }
-        .profile-card p { margin: 0; font-size: 14px; opacity: 0.9; }
+        .profile-card h2 { margin: 0 0 5px; font-size: 24px; font-weight: 700; }
+        .profile-card p { margin: 0; font-size: 15px; font-weight: 600; opacity: 0.95; }
+        .profile-card .sub-info { font-size: 13px; margin-top: 8px; opacity: 0.9; }
 
         /* Stats Grid */
         .stats-grid {
@@ -68,10 +67,10 @@
             padding: 15px;
             text-align: center;
         }
-        .stat-box h3 { margin: 0; font-size: 12px; color: #666; }
+        .stat-box h3 { margin: 0; font-size: 13px; color: #666; }
         .stat-box p { margin: 6px 0 0; font-size: 18px; font-weight: 700; color: #2c2518; }
 
-        /* Travel Bonus / Balance Sheet Card */
+        /* Balance Sheet Card */
         .balance-card {
             background: #4a3b22;
             color: #f4e8c1;
@@ -85,8 +84,8 @@
         .b-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 14px;
+            margin-bottom: 12px;
+            font-size: 15px;
         }
         .b-row span { font-weight: 600; color: #fff; }
 
@@ -105,12 +104,11 @@
             text-decoration: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        .btn-blue { background: #00bcd4; color: white; }
+        .btn-cyan { background: #00bcd4; color: white; }
         .btn-green { background: #25d366; color: white; }
         .btn-orange { background: #ff9800; color: white; }
-        .btn-gold { background: linear-gradient(135deg, #d4af37, #aa7c11); color: white; }
 
-        /* Modal Overlay for Bank/KYC */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -143,18 +141,17 @@
 <div class="dashboard-container">
     <div class="header">
         <h1>Evoke Tour Dashboard</h1>
-        <div class="menu-icon" onclick="openMenu()">⚙️</div>
     </div>
 
     <div class="content">
-        <!-- Profile & Status Header -->
-        <div class="profile-card" id="profileBg">
-            <h2 id="dashName">નામ લોડ થાય છે...</h2>
-            <p id="dashStatusText">(<span id="dashStatus">Unactive</span>)</p>
-            <p style="font-size: 12px; margin-top: 5px;">ID: <span id="dashId">ET----</span> | Mobile: <span id="dashMobile">----------</span></p>
+        <!-- Profile & Status Card -->
+        <div class="profile-card" id="profileCardBg">
+            <h2 id="dashName">યુઝર</h2>
+            <p id="dashStatusText">(Unactive)</p>
+            <div class="sub-info">ID: <span id="dashId">ET1001</span> | Mobile: <span id="dashMobile">----------</span></div>
         </div>
 
-        <!-- Team & Income Stats -->
+        <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-box">
                 <h3>👥 ટોટલ ટીમ મેમ્બર</h3>
@@ -166,7 +163,7 @@
             </div>
         </div>
 
-        <!-- Balance Sheet (Bonus Limit) -->
+        <!-- Travel Bonus Balance Sheet -->
         <div class="balance-card">
             <h3>🎁 Travel Bonus Balance Sheet</h3>
             <div class="b-row"><span>Total Limit:</span> <span id="totalLimit">0</span></div>
@@ -174,11 +171,10 @@
             <div class="b-row"><span>Remaining Limit:</span> <span id="remainingLimit">0</span></div>
         </div>
 
-        <!-- Action Buttons matching reference -->
-        <button class="action-btn btn-blue" onclick="openBankModal()">🏦 Bank & KYC Details (બેંક વિગતો)</button>
+        <!-- Action Buttons -->
+        <button class="action-btn btn-cyan" onclick="openBankModal()">🏦 Bank & KYC Details (બેંક વિગતો)</button>
         <button class="action-btn btn-orange" onclick="copyRefLink()">📋 Copy Referral Link (લિંક કોપી કરો)</button>
-        <a id="whatsappShare" href="#" target="_blank" class="action-btn btn-green">💬 Share WhatsApp Link (વોટ્સએપ શેર)</a>
-        <button class="action-btn btn-gold" onclick="openActivationModal()">⚡ Activation OTP (આઈડી એક્ટિવ કરો)</button>
+        <button class="action-btn btn-green" onclick="shareOnWhatsApp()">💬 Share WhatsApp Link (વોટ્સએપ શેર)</button>
     </div>
 </div>
 
@@ -195,110 +191,73 @@
         <label style="font-size: 13px; font-weight: bold;">IFSC Code:</label>
         <input type="text" id="ifscCode" placeholder="IFSC કોડ દાખલ કરો">
 
-        <button class="action-btn btn-gold" onclick="saveBankDetails()">સેવ કરો (Save)</button>
+        <button class="action-btn btn-cyan" onclick="saveBankDetails()">સેવ કરો (Save)</button>
         <button class="action-btn" style="background: #ccc; color: #333;" onclick="closeBankModal()">બંધ કરો (Close)</button>
-    </div>
-</div>
-
-<!-- Activation OTP Modal -->
-<div class="modal" id="activationModal">
-    <div class="modal-content">
-        <h3 style="color: #2c2518; margin-top: 0;">⚡ Partner Activation</h3>
-        <label style="font-size: 13px; font-weight: bold;">Enter Mobile Number:</label>
-        <input type="text" id="actMobile" placeholder="મોબાઈલ નંબર નાખો" onkeyup="fetchUserByMobile(this.value)">
-        
-        <p style="font-size: 14px; margin: 5px 0;">યુઝરનું નામ: <b id="foundName" style="color: #00838f;">-</b></p>
-        
-        <label style="font-size: 13px; font-weight: bold; margin-top: 10px; display: block;">Activation OTP Code:</label>
-        <input type="text" id="otpCode" placeholder="OTP કોડ દાખલ કરો">
-
-        <button class="action-btn btn-green" onclick="activateUserAccount()">ID Active કરો</button>
-        <button class="action-btn" style="background: #ccc; color: #333;" onclick="closeActivationModal()">બંધ કરો</button>
     </div>
 </div>
 
 <script>
     // લોકલ સ્ટોરેજમાંથી યુઝર ડેટા મેળવો
     let user = JSON.parse(localStorage.getItem('evokeUser')) || {
-        name: "મુકેશભાઈ પટેલ",
-        id: "ET" + Math.floor(1000 + Math.random() * 9000), // યુનિક રેન્ડમ આઈડી
-        mobile_number: "9876543210",
+        name: "હારેશભાઈ પટેલ",
+        id: "ET" + Math.floor(1000 + Math.random() * 9000),
+        mobile_number: "7010010079",
         is_active: false,
         earning: 0,
         team_count: 0
     };
 
-    // જો આઈડી પહેલેથી ન હોય તો રેન્ડમ જનરેટ કરીને સેવ કરો
+    // જો આઈડી ન હોય તો નવો રેન્ડમ જનરેટ કરો
     if (!user.id || !user.id.startsWith("ET")) {
         user.id = "ET" + Math.floor(1000 + Math.random() * 9000);
         localStorage.setItem('evokeUser', JSON.stringify(user));
     }
 
-    // ડેશબોર્ડ પર ડેટા સેટ કરો
+    // ડેશબોર્ડ પર તરત જ વિગતો સેટ કરો
     document.getElementById('dashName').innerText = user.name;
     document.getElementById('dashId').innerText = user.id;
     document.getElementById('dashMobile').innerText = user.mobile_number;
     document.getElementById('totalTeam').innerText = user.team_count || 0;
     document.getElementById('levelIncome').innerText = "₹ " + (user.earning || 0);
 
-    // Active / Unactive લોજિક અને બોનસ લિમિટ
+    // Active / Unactive સ્ટેટસ અને બેલેન્સ શીટ મેનેજમેન્ટ
     if (user.is_active === true) {
-        document.getElementById('dashStatus').innerText = "Active";
-        document.getElementById('profileBg.style.background', "linear-gradient(135deg, #11998e, #38ef7d)");
+        document.getElementById('dashStatusText').innerText = "(Active)";
+        document.getElementById('profileCardBg').style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
         document.getElementById('totalLimit').innerText = "₹ 30,000";
         document.getElementById('earningAmount').innerText = "₹ " + (user.earning || 0);
         document.getElementById('remainingLimit').innerText = "₹ " + (30000 - (user.earning || 0));
     } else {
-        document.getElementById('dashStatus').innerText = "Unactive";
+        document.getElementById('dashStatusText').innerText = "(Unactive)";
         document.getElementById('totalLimit').innerText = "0";
         document.getElementById('earningAmount').innerText = "₹ 0";
-        document.getElementById('remainingLimit').innerText = "0 (Active થતાં જ ₹30,000 મળશે)";
+        document.getElementById('remainingLimit').innerText = "0";
     }
 
-    // રેફરલ લિંક અને વોટ્સએપ શેર
+    // રેફરલ લિંક જનરેટ કરવી
     const refLinkStr = window.location.origin + "/register.html?ref=" + user.id;
-    const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે ક્લિક કરો: " + refLinkStr);
-    document.getElementById('whatsappShare').href = "https://api.whatsapp.com/send?text=" + waText;
 
     function copyRefLink() {
         navigator.clipboard.writeText(refLinkStr);
         alert("✅ રેફરલ લિંક કોપી થઈ ગઈ છે!");
     }
 
-    // બેંક મોડલ ફંクション
+    // વોટ્સએપ શેર કરવા માટેનું ફંક્શન (હવે પરફેક્ટ કામ કરશે)
+    function shareOnWhatsApp() {
+        const message = "🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે ક્લિક કરો: " + refLinkStr;
+        const whatsappUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
+        window.open(whatsappUrl, '_blank');
+    }
+
+    // બેંક મોડલ
     function openBankModal() { document.getElementById('bankModal').style.display = 'flex'; }
     function closeBankModal() { document.getElementById('bankModal').style.display = 'none'; }
     function saveBankDetails() {
         alert("✅ બેંક અને KYC વિગતો સફળતાપૂર્વક સેવ થઈ ગઈ છે!");
         closeBankModal();
     }
-
-    // એક્ટિવિટી મોડલ ફંક્શન
-    function openActivationModal() { document.getElementById('activationModal').style.display = 'flex'; }
-    function closeActivationModal() { document.getElementById('activationModal').style.display = 'none'; }
-    
-    function fetchUserByMobile(mob) {
-        if(mob.length === 10) {
-            document.getElementById('foundName').innerText = "મહેશભાઈ ચૌધરી (ઓટોમેટિક મળ્યું)";
-        }
-    }
-
-    function activateUserAccount() {
-        const otp = document.getElementById('otpCode').value;
-        if(otp) {
-            alert("✅ આઈડી સફળતાપૂર્વક Active થઈ ગયું છે!");
-            user.is_active = true;
-            localStorage.setItem('evokeUser', JSON.stringify(user));
-            location.reload();
-        } else {
-            alert("❌ કૃપા કરીને સાચો OTP નાખો.");
-        }
-    }
-
-    function openMenu() {
-        alert("⚙️ સેટિંગ્સ અને પ્રોફાઇલ મેનૂ ટૂંક સમયમાં ખૂલશે.");
-    }
 </script>
 
 </body>
-</html>
+    </html>
+    
