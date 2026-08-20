@@ -33,13 +33,12 @@
             border-bottom: 4px solid #d4af37;
         }
 
+        /* પ્રોફેશનલ ટ્રાન્સપરન્ટ લોગો સ્ટાઈલ (સફેદ બેકગ્રાઉન્ડ વગરનો) */
         .header img {
-            width: 130px;
+            width: 150px;
             height: auto;
-            background: white;
-            padding: 5px 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            display: inline-block;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
         }
 
         .content { padding: 15px; }
@@ -104,6 +103,27 @@
         .level-table th { background: #4a3b22; color: #f4e8c1; padding: 6px; }
         .level-table td { padding: 6px; border-bottom: 1px solid #e6d5b8; color: #333; }
 
+        /* ટીમ મેમ્બર લિસ્ટ બોક્સ */
+        .team-list-box {
+            background: #fffdf9;
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .team-list-box h3 { margin: 0 0 10px; font-size: 14px; color: #2c2518; border-bottom: 2px solid #d4af37; padding-bottom: 5px; text-align: center; }
+        .member-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px dashed #eee;
+            font-size: 13px;
+        }
+        .badge-active { color: #2e7d32; font-weight: bold; }
+        .badge-unactive { color: #c62828; font-weight: bold; }
+
         .action-btn {
             display: block;
             width: 100%;
@@ -121,7 +141,7 @@
         .btn-cyan { background: #00bcd4; color: white; }
         .btn-green { background: #25d366; color: white; }
         .btn-orange { background: #ff9800; color: white; }
-        .btn-admin { background: #673ab7; color: white; }
+        .btn-admin { background: #d32f2f; color: white; display: none; }
 
         .modal {
             display: none;
@@ -154,8 +174,8 @@
 
 <div class="dashboard-container">
     <div class="header">
-        <!-- સ્ટેબલ લોગો લિંક -->
-        <img src="https://i.ibb.co/6y185h6/evoke-logo.png" alt="Evoke Tour Logo" onerror="this.src='https://raw.githubusercontent.com/MAHAN0102/evoketour/main/1001688572.jpg'">
+        <!-- બેકગ્રાઉન્ડ વગરનો પ્રોફેશનલ ટ્રાન્સપરન્ટ લોગો -->
+        <img src="https://i.ibb.co/6y185h6/evoke-logo.png" alt="Evoke Tour Logo" style="mix-blend-mode: multiply;">
     </div>
 
     <div class="content">
@@ -184,7 +204,7 @@
             <div class="b-row"><span>Remaining Limit:</span> <span id="remainingLimit">0</span></div>
         </div>
 
-        <!-- લેવલ વાઇઝ કમિશન રિપોર્ટ ટેબલ -->
+        <!-- લેવલ વાઇઝ ટીમ અને બોનસ રિપોર્ટ ટેબલ -->
         <div class="chart-card">
             <h3>📊 લેવલ વાઇઝ ટીમ અને બોનસ રિપોર્ટ</h3>
             <table class="level-table">
@@ -206,9 +226,17 @@
             </table>
         </div>
 
+        <!-- ડાયરેક્ટ ટીમ મેમ્બર્સની યાદી (નામ અને સ્ટેટસ સાથે) -->
+        <div class="team-list-box">
+            <h3>📋 તમારા ડાયરેક્ટ મેમ્બર્સ (Direct Members)</h3>
+            <div id="directMembersContainer">
+                <p style="text-align: center; font-size: 12px; color: #777; margin: 5px 0;">મેમ્બર્સ લોડ થઈ રહ્યા છે...</p>
+            </div>
+        </div>
+
         <button class="action-btn btn-cyan" onclick="openBankModal()">🏦 Bank & KYC Details (બેંક વિગતો)</button>
         <button class="action-btn btn-orange" onclick="copyRefLink()">📋 Copy Referral Link (લિંક કોપી કરો)</button>
-        <button class="action-btn btn-admin" onclick="openAdminActivationModal()">⚡ Admin Activation Panel (એડમિન)</button>
+        <button class="action-btn btn-admin" id="adminActivationBtn" onclick="openAdminModal()">👑 Admin Active Panel (Haresh Patel)</button>
         <a id="whatsappShare" href="#" target="_blank" class="action-btn btn-green">💬 Share WhatsApp Link (વોટ્સએપ શેર)</a>
     </div>
 </div>
@@ -234,12 +262,12 @@
 <!-- Admin Activation Modal -->
 <div class="modal" id="adminModal">
     <div class="modal-content">
-        <h3 style="color: #2c2518; margin-top: 0;">⚡ Admin Activation Panel</h3>
-        <label style="font-size: 13px; font-weight: bold;">Enter User Mobile Number:</label>
-        <input type="text" id="targetMobile" placeholder="મેમ્બરનો મોબાઈલ નંબર નાખો">
+        <h3 style="color: #d32f2f; margin-top: 0;">👑 Admin Activation Panel</h3>
+        <label style="font-size: 13px; font-weight: bold;">Enter Member Mobile Number:</label>
+        <input type="text" id="actMobile" placeholder="10 આંકડાનો મોબાઈલ નંબર નાખો">
 
-        <button class="action-btn btn-green" onclick="adminActivateUser()">આઈડી Active કરો (₹30,000 Limit)</button>
-        <button class="action-btn" style="background: #ccc; color: #333;" onclick="closeAdminActivationModal()">બંધ કરો</button>
+        <button class="action-btn btn-green" onclick="executeAdminActivation()">આઈડી Active કરો (₹30,000 Limit)</button>
+        <button class="action-btn" style="background: #ccc; color: #333;" onclick="closeAdminModal()">બંધ કરો</button>
     </div>
 </div>
 
@@ -257,6 +285,7 @@
             return;
         }
 
+        // Supabase માંથી લેટેસ્ટ યુઝર ડેટા મેળવો
         const { data, error } = await myDb
             .from('users')
             .select('*')
@@ -272,7 +301,39 @@
         document.getElementById('dashId').innerText = formattedId;
         document.getElementById('dashMobile').innerText = user.mobile_number || "----------";
         
-        let l1 = user.level_1_count || 0;
+        // એડમિન ચેક (Haresh Patel માટે જ એડમિન બટન દેખાશે)
+        if (user.name && user.name.toLowerCase().includes("haresh")) {
+            document.getElementById('adminActivationBtn').style.display = 'block';
+        }
+
+        // ડાયરેક્ટ મેમ્બર્સ (Level 1) ના નામ અને સ્ટેટસ ફેચ કરવા માટે
+        const { data: directMembers, error: dirError } = await myDb
+            .from('users')
+            .select('name, status, id')
+            .eq('sponsor_id', formattedId);
+
+        let directContainer = document.getElementById('directMembersContainer');
+        directContainer.innerHTML = "";
+
+        let l1Count = 0;
+        if (directMembers && directMembers.length > 0) {
+            l1Count = directMembers.length;
+            directMembers.forEach(mem => {
+                let badgeClass = mem.status === "Active" ? "badge-active" : "badge-unactive";
+                let statusText = mem.status === "Active" ? "Active" : "Unactive";
+                directContainer.innerHTML += `
+                    <div class="member-item">
+                        <span>👤 ${mem.name} (ET${mem.id})</span>
+                        <span class="${badgeClass}">(${statusText})</span>
+                    </div>
+                `;
+            });
+        } else {
+            directContainer.innerHTML = `<p style="text-align: center; font-size: 12px; color: #777; margin: 5px 0;">હજુ કોઈ ડાયરેક્ટ મેમ્બર નથી.</p>`;
+        }
+
+        // બાકીના લેવલ કાઉન્ટ્સ (જો ડેટાબેઝમાં હોય તો અથવા ડિફોલ્ટ)
+        let l1 = l1Count;
         let l2 = user.level_2_count || 0;
         let l3 = user.level_3_count || 0;
         let l4 = user.level_4_count || 0;
@@ -308,16 +369,19 @@
         document.getElementById('l8Count').innerText = l8; document.getElementById('l8Pay').innerText = "₹" + p8;
         document.getElementById('l9Count').innerText = l9; document.getElementById('l9Pay').innerText = "₹" + p9;
 
+        // Active સ્ટેટસ અને લેવલ ઇનકમ જનરેશન (Gracy Patel કે ગમે તે મેમ્બર માટે)
         if (user.status === "Active") {
             document.getElementById('dashStatusText').innerText = "(Active)";
             document.getElementById('profileCardBg').style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
             
             document.getElementById('totalLimit').innerText = "₹ 30,000";
+            document.getElementById('levelIncome').innerText = "₹ " + calculatedEarning;
             document.getElementById('earningAmount').innerText = "₹ " + calculatedEarning;
-            document.getElementById('remainingLimit').innerText = "₹ " + (30000 - calculatedEarning);
+            document.getElementById('remainingLimit').innerText = "₹ " + Math.max(0, 30000 - calculatedEarning);
         } else {
             document.getElementById('dashStatusText').innerText = "(Unactive)";
             document.getElementById('totalLimit').innerText = "0";
+            document.getElementById('levelIncome').innerText = "₹ 0";
             document.getElementById('earningAmount').innerText = "₹ 0";
             document.getElementById('remainingLimit').innerText = "0";
         }
@@ -334,27 +398,20 @@
 
     loadDashboard();
 
-    function openBankModal() { document.getElementById('bankModal').style.display = 'flex'; }
-    function closeBankModal() { document.getElementById('bankModal').style.display = 'none'; }
-    function saveBankDetails() {
-        alert("✅ બેંક અને KYC વિગતો સફળતાપૂર્વક સેવ થઈ ગઈ છે!");
-        closeBankModal();
-    }
-
-    // એડમિન એક્ટિવેશન પેનલ ફંક્શન
-    function openAdminActivationModal() {
-        let pass = prompt("એડમિન પાસવર્ડ દાખલ કરો:");
-        if (pass === "evoke2026") {
+    // એડમિન એક્ટિવેશન મોડલ
+    function openAdminModal() {
+        let pass = prompt("એડમિન પાસવર્ડ નાખો (evoke11111):");
+        if (pass === "evoke11111") {
             document.getElementById('adminModal').style.display = 'flex';
         } else if (pass !== null) {
             alert("❌ ખોટો પાસવર્ડ!");
         }
     }
-    function closeAdminActivationModal() { document.getElementById('adminModal').style.display = 'none'; }
+    function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
 
-    async function adminActivateUser() {
-        const targetMob = document.getElementById('targetMobile').value;
-        if (!targetMob || targetMob.length !== 10) {
+    async function executeAdminActivation() {
+        const mob = document.getElementById('actMobile').value;
+        if (!mob || mob.length !== 10) {
             alert("કૃપા કરીને સાચો 10 આંકડાનો મોબાઈલ નંબર નાખો.");
             return;
         }
@@ -362,18 +419,25 @@
         const { data, error } = await myDb
             .from('users')
             .update({ status: 'Active', total_limit: 30000 })
-            .eq('mobile_number', targetMob);
+            .eq('mobile_number', mob);
 
         if (error) {
             alert("❌ એક્ટિવ કરવામાં ભૂલ: " + error.message);
         } else {
             alert("✅ આઈડી સફળતાપૂર્વક Active થઈ ગયું છે અને ₹30,000 ની લિમિટ ફાળવાઈ ગઈ છે!");
-            closeAdminActivationModal();
+            closeAdminModal();
             location.reload();
         }
+    }
+
+    function openBankModal() { document.getElementById('bankModal').style.display = 'flex'; }
+    function closeBankModal() { document.getElementById('bankModal').style.display = 'none'; }
+    function saveBankDetails() {
+        alert("✅ બેંક અને KYC વિગતો સફળતાપૂર્વક સેવ થઈ ગઈ છે!");
+        closeBankModal();
     }
 </script>
 
 </body>
-                                                 </html>
-    
+            </html>
+            
