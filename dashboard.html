@@ -26,19 +26,19 @@
             border: 1px solid #e6d5b8;
         }
 
+        /* લોગો માટે પ્રોફેશનલ વ્હાઇટ બેકગ્રાઉન્ડ હેડર */
         .header {
-            background: linear-gradient(135deg, #2c2518, #4a3b22);
+            background: #ffffff;
             padding: 15px;
             text-align: center;
             border-bottom: 4px solid #d4af37;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        /* પ્રોફેશનલ ટ્રાન્સપરન્ટ લોગો સ્ટાઈલ (સફેદ બેકગ્રાઉન્ડ વગરનો) */
         .header img {
-            width: 150px;
+            width: 160px;
             height: auto;
             display: inline-block;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
         }
 
         .content { padding: 15px; }
@@ -103,7 +103,6 @@
         .level-table th { background: #4a3b22; color: #f4e8c1; padding: 6px; }
         .level-table td { padding: 6px; border-bottom: 1px solid #e6d5b8; color: #333; }
 
-        /* ટીમ મેમ્બર લિસ્ટ બોક્સ */
         .team-list-box {
             background: #fffdf9;
             border: 1px solid #d4af37;
@@ -173,9 +172,9 @@
 <body>
 
 <div class="dashboard-container">
+    <!-- વ્હાઇટ બેકગ્રાઉન્ડ હેડર અને બ્રાન્ડ લોગો -->
     <div class="header">
-        <!-- બેકગ્રાઉન્ડ વગરનો પ્રોફેશનલ ટ્રાન્સપરન્ટ લોગો -->
-        <img src="https://i.ibb.co/6y185h6/evoke-logo.png" alt="Evoke Tour Logo" style="mix-blend-mode: multiply;">
+        <img src="https://i.ibb.co/6y185h6/evoke-logo.png" alt="Evoke Tour Logo">
     </div>
 
     <div class="content">
@@ -199,12 +198,12 @@
 
         <div class="balance-card">
             <h3>🎁 Travel Bonus Balance Sheet</h3>
-            <div class="b-row"><span>Total Limit:</span> <span id="totalLimit">0</span></div>
+            <div class="b-row"><span>Total Limit:</span> <span id="totalLimit">₹ 30,000</span></div>
             <div class="b-row"><span>Earning:</span> <span id="earningAmount">₹ 0</span></div>
-            <div class="b-row"><span>Remaining Limit:</span> <span id="remainingLimit">0</span></div>
+            <div class="b-row"><span>Remaining Limit:</span> <span id="remainingLimit">₹ 30,000</span></div>
         </div>
 
-        <!-- લેવલ વાઇઝ ટીમ અને બોનસ રિપોર્ટ ટેબલ -->
+        <!-- લેવલ વાઇઝ કમિશન રિપોર્ટ ટેબલ -->
         <div class="chart-card">
             <h3>📊 લેવલ વાઇઝ ટીમ અને બોનસ રિપોર્ટ</h3>
             <table class="level-table">
@@ -226,7 +225,7 @@
             </table>
         </div>
 
-        <!-- ડાયરેક્ટ ટીમ મેમ્બર્સની યાદી (નામ અને સ્ટેટસ સાથે) -->
+        <!-- ડાયરેક્ટ ટીમ મેમ્બર્સની યાદી -->
         <div class="team-list-box">
             <h3>📋 તમારા ડાયરેક્ટ મેમ્બર્સ (Direct Members)</h3>
             <div id="directMembersContainer">
@@ -266,7 +265,7 @@
         <label style="font-size: 13px; font-weight: bold;">Enter Member Mobile Number:</label>
         <input type="text" id="actMobile" placeholder="10 આંકડાનો મોબાઈલ નંબર નાખો">
 
-        <button class="action-btn btn-green" onclick="executeAdminActivation()">આઈડી Active કરો (₹30,000 Limit)</button>
+        <button class="action-btn btn-green" onclick="executeAdminActivation()">આઈડી Active કરો (+₹30,000 Limit)</button>
         <button class="action-btn" style="background: #ccc; color: #333;" onclick="closeAdminModal()">બંધ કરો</button>
     </div>
 </div>
@@ -285,7 +284,6 @@
             return;
         }
 
-        // Supabase માંથી લેટેસ્ટ યુઝર ડેટા મેળવો
         const { data, error } = await myDb
             .from('users')
             .select('*')
@@ -301,12 +299,12 @@
         document.getElementById('dashId').innerText = formattedId;
         document.getElementById('dashMobile').innerText = user.mobile_number || "----------";
         
-        // એડમિન ચેક (Haresh Patel માટે જ એડમિન બટન દેખાશે)
+        // Haresh Patel માટે જ એડમિન પેનલ બટન
         if (user.name && user.name.toLowerCase().includes("haresh")) {
             document.getElementById('adminActivationBtn').style.display = 'block';
         }
 
-        // ડાયરેક્ટ મેમ્બર્સ (Level 1) ના નામ અને સ્ટેટસ ફેચ કરવા માટે
+        // ડાયરેક્ટ મેમ્બર્સ (Level 1) ના નામ અને સ્ટેટસ (માત્ર Active મેમ્બર્સની જ ઇનકમ ગણવી)
         const { data: directMembers, error: dirError } = await myDb
             .from('users')
             .select('name, status, id')
@@ -315,12 +313,14 @@
         let directContainer = document.getElementById('directMembersContainer');
         directContainer.innerHTML = "";
 
-        let l1Count = 0;
+        let activeL1Count = 0;
         if (directMembers && directMembers.length > 0) {
-            l1Count = directMembers.length;
             directMembers.forEach(mem => {
-                let badgeClass = mem.status === "Active" ? "badge-active" : "badge-unactive";
-                let statusText = mem.status === "Active" ? "Active" : "Unactive";
+                let isActive = mem.status === "Active";
+                if (isActive) activeL1Count++; // માત્ર Active મેમ્બર્સ જ કમિશનમાં ગણાશે
+                
+                let badgeClass = isActive ? "badge-active" : "badge-unactive";
+                let statusText = isActive ? "Active" : "Unactive";
                 directContainer.innerHTML += `
                     <div class="member-item">
                         <span>👤 ${mem.name} (ET${mem.id})</span>
@@ -332,8 +332,7 @@
             directContainer.innerHTML = `<p style="text-align: center; font-size: 12px; color: #777; margin: 5px 0;">હજુ કોઈ ડાયરેક્ટ મેમ્બર નથી.</p>`;
         }
 
-        // બાકીના લેવલ કાઉન્ટ્સ (જો ડેટાબેઝમાં હોય તો અથવા ડિફોલ્ટ)
-        let l1 = l1Count;
+        let l1 = activeL1Count;
         let l2 = user.level_2_count || 0;
         let l3 = user.level_3_count || 0;
         let l4 = user.level_4_count || 0;
@@ -353,10 +352,10 @@
         let p8 = l8 * 25;
         let p9 = l9 * 25;
 
-        let totalTeamCount = l1 + l2 + l3 + l4 + l5 + l6 + l7 + l8 + l9;
+        let totalTeamCount = (directMembers ? directMembers.length : 0) + l2 + l3 + l4 + l5 + l6 + l7 + l8 + l9;
         let calculatedEarning = p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
 
-        document.getElementById('directTeamCount').innerText = l1;
+        document.getElementById('directTeamCount').innerText = directMembers ? directMembers.length : 0;
         document.getElementById('totalTeam').innerText = totalTeamCount;
 
         document.getElementById('l1Count').innerText = l1; document.getElementById('l1Pay').innerText = "₹" + p1;
@@ -369,21 +368,26 @@
         document.getElementById('l8Count').innerText = l8; document.getElementById('l8Pay').innerText = "₹" + p8;
         document.getElementById('l9Count').innerText = l9; document.getElementById('l9Pay').innerText = "₹" + p9;
 
-        // Active સ્ટેટસ અને લેવલ ઇનકમ જનરેશન (Gracy Patel કે ગમે તે મેમ્બર માટે)
+        // Active સ્ટેટસ અને બેલેન્સ શીટ (મલ્ટીપલ 30000 લિમિટ સપોર્ટ સાથે)
         if (user.status === "Active") {
             document.getElementById('dashStatusText').innerText = "(Active)";
             document.getElementById('profileCardBg').style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
             
-            document.getElementById('totalLimit').innerText = "₹ 30,000";
-            document.getElementById('levelIncome').innerText = "₹ " + calculatedEarning;
-            document.getElementById('earningAmount').innerText = "₹ " + calculatedEarning;
-            document.getElementById('remainingLimit').innerText = "₹ " + Math.max(0, 30000 - calculatedEarning);
+            // જો ડેટાબેઝમાં કુલ લિમિટ સેવ હોય તો તે લેવી, નહીંતર ડિફોલ્ટ 30000
+            let currentLimit = user.total_limit || 30000;
+            let currentEarning = calculatedEarning;
+            let remaining = currentLimit - currentEarning;
+
+            document.getElementById('totalLimit').innerText = "₹ " + currentLimit.toLocaleString();
+            document.getElementById('levelIncome').innerText = "₹ " + currentEarning.toLocaleString();
+            document.getElementById('earningAmount').innerText = "₹ " + currentEarning.toLocaleString();
+            document.getElementById('remainingLimit').innerText = "₹ " + Math.max(0, remaining).toLocaleString();
         } else {
             document.getElementById('dashStatusText').innerText = "(Unactive)";
-            document.getElementById('totalLimit').innerText = "0";
+            document.getElementById('totalLimit').innerText = "₹ 30,000";
             document.getElementById('levelIncome').innerText = "₹ 0";
             document.getElementById('earningAmount').innerText = "₹ 0";
-            document.getElementById('remainingLimit').innerText = "0";
+            document.getElementById('remainingLimit').innerText = "₹ 30,000";
         }
 
         const refLinkStr = window.location.origin + "/register.html?ref=" + formattedId;
@@ -416,15 +420,27 @@
             return;
         }
 
+        // પહેલા યુઝરની હાલની લિમિટ ચેક કરો જેથી 30,000 ના ગુણાંકમાં વધારી શકાય (જેમ કે 30000 -> 60000 -> 90000)
+        const { data: targetUser } = await myDb
+            .from('users')
+            .select('total_limit')
+            .eq('mobile_number', mob)
+            .single();
+
+        let newLimit = 30000;
+        if (targetUser && targetUser.total_limit) {
+            newLimit = Number(targetUser.total_limit) + 30000;
+        }
+
         const { data, error } = await myDb
             .from('users')
-            .update({ status: 'Active', total_limit: 30000 })
+            .update({ status: 'Active', total_limit: newLimit })
             .eq('mobile_number', mob);
 
         if (error) {
             alert("❌ એક્ટિવ કરવામાં ભૂલ: " + error.message);
         } else {
-            alert("✅ આઈડી સફળતાપૂર્વક Active થઈ ગયું છે અને ₹30,000 ની લિમિટ ફાળવાઈ ગઈ છે!");
+            alert(`✅ આઈડી સફળતાપૂર્વક Active થઈ ગયું છે! કુલ લિમિટ હવે ₹${newLimit.toLocaleString()} થઈ ગઈ છે.`);
             closeAdminModal();
             location.reload();
         }
@@ -439,5 +455,5 @@
 </script>
 
 </body>
-            </html>
+    </html>
             
