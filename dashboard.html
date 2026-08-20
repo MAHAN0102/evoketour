@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Evoke Tour - Dashboard</title>
-    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
@@ -29,13 +28,19 @@
 
         .header {
             background: linear-gradient(135deg, #2c2518, #4a3b22);
-            color: #f4e8c1;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             border-bottom: 4px solid #d4af37;
         }
 
-        .header h1 { margin: 0; font-size: 22px; letter-spacing: 1px; color: #f4e8c1; }
+        .header img {
+            width: 130px;
+            height: auto;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
 
         .content { padding: 15px; }
 
@@ -87,6 +92,18 @@
         }
         .b-row span { font-weight: 600; color: #fff; }
 
+        .chart-card {
+            background: #fffdf9;
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .chart-card h3 { margin: 0 0 10px; font-size: 15px; color: #2c2518; text-align: center; border-bottom: 2px solid #d4af37; padding-bottom: 5px; }
+        .level-table { width: 100%; font-size: 12px; border-collapse: collapse; text-align: center; }
+        .level-table th { background: #4a3b22; color: #f4e8c1; padding: 6px; }
+        .level-table td { padding: 6px; border-bottom: 1px solid #e6d5b8; color: #333; }
+
         .action-btn {
             display: block;
             width: 100%;
@@ -104,6 +121,7 @@
         .btn-cyan { background: #00bcd4; color: white; }
         .btn-green { background: #25d366; color: white; }
         .btn-orange { background: #ff9800; color: white; }
+        .btn-admin { background: #673ab7; color: white; }
 
         .modal {
             display: none;
@@ -136,7 +154,8 @@
 
 <div class="dashboard-container">
     <div class="header">
-        <h1>Evoke Tour Dashboard</h1>
+        <!-- સ્ટેબલ લોગો લિંક -->
+        <img src="https://i.ibb.co/6y185h6/evoke-logo.png" alt="Evoke Tour Logo" onerror="this.src='https://raw.githubusercontent.com/MAHAN0102/evoketour/main/1001688572.jpg'">
     </div>
 
     <div class="content">
@@ -149,12 +168,12 @@
 
         <div class="stats-grid">
             <div class="stat-box">
-                <h3>👥 ટોટલ ટીમ મેમ્બર</h3>
-                <p id="totalTeam">0</p>
+                <h3>👥 ડાયરેક્ટ ટીમ (Direct)</h3>
+                <p id="directTeamCount">0</p>
             </div>
             <div class="stat-box">
-                <h3>🏆 લેવલ ઇનકમ</h3>
-                <p id="levelIncome">₹ 0</p>
+                <h3>🌐 ટોટલ ગ્રુપ ટીમ</h3>
+                <p id="totalTeam">0</p>
             </div>
         </div>
 
@@ -165,8 +184,31 @@
             <div class="b-row"><span>Remaining Limit:</span> <span id="remainingLimit">0</span></div>
         </div>
 
+        <!-- લેવલ વાઇઝ કમિશન રિપોર્ટ ટેબલ -->
+        <div class="chart-card">
+            <h3>📊 લેવલ વાઇઝ ટીમ અને બોનસ રિપોર્ટ</h3>
+            <table class="level-table">
+                <tr>
+                    <th>Level</th>
+                    <th>Rate</th>
+                    <th>Team</th>
+                    <th>Payout</th>
+                </tr>
+                <tr><td>Level 1</td><td>₹200</td><td id="l1Count">0</td><td id="l1Pay">₹0</td></tr>
+                <tr><td>Level 2</td><td>₹100</td><td id="l2Count">0</td><td id="l2Pay">₹0</td></tr>
+                <tr><td>Level 3</td><td>₹50</td><td id="l3Count">0</td><td id="l3Pay">₹0</td></tr>
+                <tr><td>Level 4</td><td>₹50</td><td id="l4Count">0</td><td id="l4Pay">₹0</td></tr>
+                <tr><td>Level 5</td><td>₹50</td><td id="l5Count">0</td><td id="l5Pay">₹0</td></tr>
+                <tr><td>Level 6</td><td>₹25</td><td id="l6Count">0</td><td id="l6Pay">₹0</td></tr>
+                <tr><td>Level 7</td><td>₹25</td><td id="l7Count">0</td><td id="l7Pay">₹0</td></tr>
+                <tr><td>Level 8</td><td>₹25</td><td id="l8Count">0</td><td id="l8Pay">₹0</td></tr>
+                <tr><td>Level 9</td><td>₹25</td><td id="l9Count">0</td><td id="l9Pay">₹0</td></tr>
+            </table>
+        </div>
+
         <button class="action-btn btn-cyan" onclick="openBankModal()">🏦 Bank & KYC Details (બેંક વિગતો)</button>
         <button class="action-btn btn-orange" onclick="copyRefLink()">📋 Copy Referral Link (લિંક કોપી કરો)</button>
+        <button class="action-btn btn-admin" onclick="openAdminActivationModal()">⚡ Admin Activation Panel (એડમિન)</button>
         <a id="whatsappShare" href="#" target="_blank" class="action-btn btn-green">💬 Share WhatsApp Link (વોટ્સએપ શેર)</a>
     </div>
 </div>
@@ -189,6 +231,18 @@
     </div>
 </div>
 
+<!-- Admin Activation Modal -->
+<div class="modal" id="adminModal">
+    <div class="modal-content">
+        <h3 style="color: #2c2518; margin-top: 0;">⚡ Admin Activation Panel</h3>
+        <label style="font-size: 13px; font-weight: bold;">Enter User Mobile Number:</label>
+        <input type="text" id="targetMobile" placeholder="મેમ્બરનો મોબાઈલ નંબર નાખો">
+
+        <button class="action-btn btn-green" onclick="adminActivateUser()">આઈડી Active કરો (₹30,000 Limit)</button>
+        <button class="action-btn" style="background: #ccc; color: #333;" onclick="closeAdminActivationModal()">બંધ કરો</button>
+    </div>
+</div>
+
 <script>
     const supabaseUrl = 'https://imggtidezvfxxpovftyx.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltZ2d0aWRlenZmeHhwb3ZmdHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwMzk2MDQsImV4cCI6MjEwMjYxNTYwNH0.R386PRqplXZeJsAZk_kLgCi-MDGzOeaoVdHAB7TGiJ8';
@@ -203,7 +257,6 @@
             return;
         }
 
-        // Supabase માંથી લેટેસ્ટ ડેટા ખેંચી લાવવો
         const { data, error } = await myDb
             .from('users')
             .select('*')
@@ -218,31 +271,57 @@
         document.getElementById('dashName').innerText = user.name || "પાર્ટનર";
         document.getElementById('dashId').innerText = formattedId;
         document.getElementById('dashMobile').innerText = user.mobile_number || "----------";
-        document.getElementById('totalTeam').innerText = user.direct_invites || user.team_count || 0;
+        
+        let l1 = user.level_1_count || 0;
+        let l2 = user.level_2_count || 0;
+        let l3 = user.level_3_count || 0;
+        let l4 = user.level_4_count || 0;
+        let l5 = user.level_5_count || 0;
+        let l6 = user.level_6_count || 0;
+        let l7 = user.level_7_count || 0;
+        let l8 = user.level_8_count || 0;
+        let l9 = user.level_9_count || 0;
 
-        // જો યુઝર Status "Active" હોય તો જ લિમિટ અને બેલેન્સ દેખાડવું
+        let p1 = l1 * 200;
+        let p2 = l2 * 100;
+        let p3 = l3 * 50;
+        let p4 = l4 * 50;
+        let p5 = l5 * 50;
+        let p6 = l6 * 25;
+        let p7 = l7 * 25;
+        let p8 = l8 * 25;
+        let p9 = l9 * 25;
+
+        let totalTeamCount = l1 + l2 + l3 + l4 + l5 + l6 + l7 + l8 + l9;
+        let calculatedEarning = p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
+
+        document.getElementById('directTeamCount').innerText = l1;
+        document.getElementById('totalTeam').innerText = totalTeamCount;
+
+        document.getElementById('l1Count').innerText = l1; document.getElementById('l1Pay').innerText = "₹" + p1;
+        document.getElementById('l2Count').innerText = l2; document.getElementById('l2Pay').innerText = "₹" + p2;
+        document.getElementById('l3Count').innerText = l3; document.getElementById('l3Pay').innerText = "₹" + p3;
+        document.getElementById('l4Count').innerText = l4; document.getElementById('l4Pay').innerText = "₹" + p4;
+        document.getElementById('l5Count').innerText = l5; document.getElementById('l5Pay').innerText = "₹" + p5;
+        document.getElementById('l6Count').innerText = l6; document.getElementById('l6Pay').innerText = "₹" + p6;
+        document.getElementById('l7Count').innerText = l7; document.getElementById('l7Pay').innerText = "₹" + p7;
+        document.getElementById('l8Count').innerText = l8; document.getElementById('l8Pay').innerText = "₹" + p8;
+        document.getElementById('l9Count').innerText = l9; document.getElementById('l9Pay').innerText = "₹" + p9;
+
         if (user.status === "Active") {
             document.getElementById('dashStatusText').innerText = "(Active)";
             document.getElementById('profileCardBg').style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
             
-            const totalLim = user.total_limit || 30000;
-            const earn = user.total_earning || user.earning || 0;
-            const remLim = totalLim - earn;
-
-            document.getElementById('totalLimit').innerText = "₹ " + totalLim;
-            document.getElementById('levelIncome').innerText = "₹ " + earn;
-            document.getElementById('earningAmount').innerText = "₹ " + earn;
-            document.getElementById('remainingLimit').innerText = "₹ " + remLim;
+            document.getElementById('totalLimit').innerText = "₹ 30,000";
+            document.getElementById('earningAmount').innerText = "₹ " + calculatedEarning;
+            document.getElementById('remainingLimit').innerText = "₹ " + (30000 - calculatedEarning);
         } else {
-            // Unactive હોય ત્યારે બધું 0 જ બતાવવું
             document.getElementById('dashStatusText').innerText = "(Unactive)";
             document.getElementById('totalLimit').innerText = "0";
-            document.getElementById('levelIncome').innerText = "₹ 0";
             document.getElementById('earningAmount').innerText = "₹ 0";
             document.getElementById('remainingLimit').innerText = "0";
         }
 
-        // રેફરલ લિંક અને વોટ્સએપ શેર
         const refLinkStr = window.location.origin + "/register.html?ref=" + formattedId;
         const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે ક્લિક કરો: " + refLinkStr);
         document.getElementById('whatsappShare').href = "https://api.whatsapp.com/send?text=" + waText;
@@ -261,7 +340,40 @@
         alert("✅ બેંક અને KYC વિગતો સફળતાપૂર્વક સેવ થઈ ગઈ છે!");
         closeBankModal();
     }
+
+    // એડમિન એક્ટિવેશન પેનલ ફંક્શન
+    function openAdminActivationModal() {
+        let pass = prompt("એડમિન પાસવર્ડ દાખલ કરો:");
+        if (pass === "evoke2026") {
+            document.getElementById('adminModal').style.display = 'flex';
+        } else if (pass !== null) {
+            alert("❌ ખોટો પાસવર્ડ!");
+        }
+    }
+    function closeAdminActivationModal() { document.getElementById('adminModal').style.display = 'none'; }
+
+    async function adminActivateUser() {
+        const targetMob = document.getElementById('targetMobile').value;
+        if (!targetMob || targetMob.length !== 10) {
+            alert("કૃપા કરીને સાચો 10 આંકડાનો મોબાઈલ નંબર નાખો.");
+            return;
+        }
+
+        const { data, error } = await myDb
+            .from('users')
+            .update({ status: 'Active', total_limit: 30000 })
+            .eq('mobile_number', targetMob);
+
+        if (error) {
+            alert("❌ એક્ટિવ કરવામાં ભૂલ: " + error.message);
+        } else {
+            alert("✅ આઈડી સફળતાપૂર્વક Active થઈ ગયું છે અને ₹30,000 ની લિમિટ ફાળવાઈ ગઈ છે!");
+            closeAdminActivationModal();
+            location.reload();
+        }
+    }
 </script>
 
 </body>
-</html>
+                                                 </html>
+    
