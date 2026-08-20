@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Evoke Tour - Dashboard</title>
+    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
@@ -38,7 +39,6 @@
 
         .content { padding: 15px; }
 
-        /* Profile Card */
         .profile-card {
             background: linear-gradient(135deg, #ff7e5f, #feb47b);
             color: white;
@@ -52,7 +52,6 @@
         .profile-card p { margin: 0; font-size: 15px; font-weight: 600; opacity: 0.95; }
         .profile-card .sub-info { font-size: 13px; margin-top: 8px; opacity: 0.9; }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -70,7 +69,6 @@
         .stat-box h3 { margin: 0; font-size: 13px; color: #666; }
         .stat-box p { margin: 6px 0 0; font-size: 18px; font-weight: 700; color: #2c2518; }
 
-        /* Balance Sheet Card */
         .balance-card {
             background: #4a3b22;
             color: #f4e8c1;
@@ -89,7 +87,6 @@
         }
         .b-row span { font-weight: 600; color: #fff; }
 
-        /* Action Buttons */
         .action-btn {
             display: block;
             width: 100%;
@@ -108,7 +105,6 @@
         .btn-green { background: #25d366; color: white; }
         .btn-orange { background: #ff9800; color: white; }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -144,14 +140,13 @@
     </div>
 
     <div class="content">
-        <!-- Profile & Status Card -->
+        <!-- Profile Card -->
         <div class="profile-card" id="profileCardBg">
-            <h2 id="dashName">યુઝર</h2>
+            <h2 id="dashName">માહિતી આવી રહી છે...</h2>
             <p id="dashStatusText">(Unactive)</p>
-            <div class="sub-info">ID: <span id="dashId">ET1001</span> | Mobile: <span id="dashMobile">----------</span></div>
+            <div class="sub-info">ID: <span id="dashId">ET----</span> | Mobile: <span id="dashMobile">----------</span></div>
         </div>
 
-        <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-box">
                 <h3>👥 ટોટલ ટીમ મેમ્બર</h3>
@@ -163,7 +158,6 @@
             </div>
         </div>
 
-        <!-- Travel Bonus Balance Sheet -->
         <div class="balance-card">
             <h3>🎁 Travel Bonus Balance Sheet</h3>
             <div class="b-row"><span>Total Limit:</span> <span id="totalLimit">0</span></div>
@@ -171,10 +165,9 @@
             <div class="b-row"><span>Remaining Limit:</span> <span id="remainingLimit">0</span></div>
         </div>
 
-        <!-- Action Buttons -->
         <button class="action-btn btn-cyan" onclick="openBankModal()">🏦 Bank & KYC Details (બેંક વિગતો)</button>
         <button class="action-btn btn-orange" onclick="copyRefLink()">📋 Copy Referral Link (લિંક કોપી કરો)</button>
-        <button class="action-btn btn-green" onclick="shareOnWhatsApp()">💬 Share WhatsApp Link (વોટ્સએપ શેર)</button>
+        <a id="whatsappShare" href="#" target="_blank" class="action-btn btn-green">💬 Share WhatsApp Link (વોટ્સએપ શેર)</a>
     </div>
 </div>
 
@@ -197,59 +190,66 @@
 </div>
 
 <script>
-    // લોકલ સ્ટોરેજમાંથી યુઝર ડેટા મેળવો
-    let user = JSON.parse(localStorage.getItem('evokeUser')) || {
-        name: "હારેશભાઈ પટેલ",
-        id: "ET" + Math.floor(1000 + Math.random() * 9000),
-        mobile_number: "7010010079",
-        is_active: false,
-        earning: 0,
-        team_count: 0
-    };
+    const supabaseUrl = 'https://imggtidezvfxxpovftyx.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltZ2d0aWRlenZmeHhwb3ZmdHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwMzk2MDQsImV4cCI6MjEwMjYxNTYwNH0.R386PRqplXZeJsAZk_kLgCi-MDGzOeaoVdHAB7TGiJ8';
+    const myDb = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // જો આઈડી ન હોય તો નવો રેન્ડમ જનરેટ કરો
-    if (!user.id || !user.id.startsWith("ET")) {
-        user.id = "ET" + Math.floor(1000 + Math.random() * 9000);
-        localStorage.setItem('evokeUser', JSON.stringify(user));
+    async function loadDashboard() {
+        // લોકલસ્ટોરેજમાંથી યુઝર મેળવો
+        let user = JSON.parse(localStorage.getItem('evokeUser'));
+
+        if (!user || !user.mobile_number) {
+            alert("કૃપા કરીને પહેલા લોગિન કરો!");
+            window.location.href = "index.html";
+            return;
+        }
+
+        // Supabase માંથી લેટેસ્ટ ડેટા ખેંચી લાવો જેથી નામ અને આઈડી પાક્કા મળી જાય
+        const { data, error } = await myDb
+            .from('users')
+            .select('*')
+            .eq('mobile_number', user.mobile_number)
+            .single();
+
+        if (data) {
+            user = data; // ડેટાબેઝનો લેટેસ્ટ ડેટા સેટ કરો
+        }
+
+        // સ્ક્રીન પર નામ, આઈડી અને મોબાઈલ સેટ કરો
+        const formattedId = "ET" + (user.id || "1001");
+        document.getElementById('dashName').innerText = user.name || "પાર્ટનર";
+        document.getElementById('dashId').innerText = formattedId;
+        document.getElementById('dashMobile').innerText = user.mobile_number || "----------";
+        document.getElementById('totalTeam').innerText = user.team_count || 0;
+        document.getElementById('levelIncome').innerText = "₹ " + (user.earning || 0);
+
+        // Active / Unactive સ્ટેટસ
+        if (user.is_active === true) {
+            document.getElementById('dashStatusText').innerText = "(Active)";
+            document.getElementById('profileCardBg').style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
+            document.getElementById('totalLimit').innerText = "₹ 30,000";
+            document.getElementById('earningAmount').innerText = "₹ " + (user.earning || 0);
+            document.getElementById('remainingLimit').innerText = "₹ " + (30000 - (user.earning || 0));
+        } else {
+            document.getElementById('dashStatusText').innerText = "(Unactive)";
+            document.getElementById('totalLimit').innerText = "0";
+            document.getElementById('earningAmount').innerText = "₹ 0";
+            document.getElementById('remainingLimit').innerText = "0";
+        }
+
+        // રેફરલ લિંક અને વોટ્સએપ શેર
+        const refLinkStr = window.location.origin + "/register.html?ref=" + formattedId;
+        const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે ક્લિક કરો: " + refLinkStr);
+        document.getElementById('whatsappShare').href = "https://api.whatsapp.com/send?text=" + waText;
+
+        window.copyRefLink = function() {
+            navigator.clipboard.writeText(refLinkStr);
+            alert("✅ રેફરલ લિંક કોપી થઈ ગઈ છે!");
+        }
     }
 
-    // ડેશબોર્ડ પર તરત જ વિગતો સેટ કરો
-    document.getElementById('dashName').innerText = user.name;
-    document.getElementById('dashId').innerText = user.id;
-    document.getElementById('dashMobile').innerText = user.mobile_number;
-    document.getElementById('totalTeam').innerText = user.team_count || 0;
-    document.getElementById('levelIncome').innerText = "₹ " + (user.earning || 0);
+    loadDashboard();
 
-    // Active / Unactive સ્ટેટસ અને બેલેન્સ શીટ મેનેજમેન્ટ
-    if (user.is_active === true) {
-        document.getElementById('dashStatusText').innerText = "(Active)";
-        document.getElementById('profileCardBg').style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
-        document.getElementById('totalLimit').innerText = "₹ 30,000";
-        document.getElementById('earningAmount').innerText = "₹ " + (user.earning || 0);
-        document.getElementById('remainingLimit').innerText = "₹ " + (30000 - (user.earning || 0));
-    } else {
-        document.getElementById('dashStatusText').innerText = "(Unactive)";
-        document.getElementById('totalLimit').innerText = "0";
-        document.getElementById('earningAmount').innerText = "₹ 0";
-        document.getElementById('remainingLimit').innerText = "0";
-    }
-
-    // રેફરલ લિંક જનરેટ કરવી
-    const refLinkStr = window.location.origin + "/register.html?ref=" + user.id;
-
-    function copyRefLink() {
-        navigator.clipboard.writeText(refLinkStr);
-        alert("✅ રેફરલ લિંક કોપી થઈ ગઈ છે!");
-    }
-
-    // વોટ્સએપ શેર કરવા માટેનું ફંક્શન (હવે પરફેક્ટ કામ કરશે)
-    function shareOnWhatsApp() {
-        const message = "🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે ક્લિક કરો: " + refLinkStr;
-        const whatsappUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
-        window.open(whatsappUrl, '_blank');
-    }
-
-    // બેંક મોડલ
     function openBankModal() { document.getElementById('bankModal').style.display = 'flex'; }
     function closeBankModal() { document.getElementById('bankModal').style.display = 'none'; }
     function saveBankDetails() {
@@ -259,5 +259,4 @@
 </script>
 
 </body>
-    </html>
-    
+</html>
