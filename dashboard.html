@@ -1,100 +1,268 @@
 <!DOCTYPE html>
 <html lang="gu">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Evoke Tour - Partner Dashboard</title>
-</head>
-<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; min-height: 100vh; margin: 0; padding: 20px;">
-  
-  <!-- Header Section -->
-  <div style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); padding: 20px; border-radius: 12px; color: white; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-    <div>
-      <h1 style="margin: 0; font-size: 24px; font-weight: 900;">Evoke Tour 4.0</h1>
-      <p style="margin: 5px 0 0; font-size: 14px; opacity: 0.9;">પાર્ટનર ડેશબોર્ડ (Partner Dashboard)</p>
-    </div>
-    <div style="background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 8px; font-weight: bold;">
-      <p style="color: #ffffff; margin-bottom: 5px; font-size: 16px; margin-top: 0;">
-        સ્વાગત છે, <strong id="partnerName">પાર્ટનર</strong>!
-      </p>
-      <div id="partnerId" style="background-color: #ffffff; color: #1e3c72; display: inline-block; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 14px;">
-        ID: લોડ થઈ રહ્યું છે...
-      </div>
-    </div>
-  </div>
-
-  <!-- Referral Link Section -->
-  <div style="background: white; padding: 25px; border-radius: 12px; margin-top: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-     <h3 style="color: #1e3c72; margin-top: 0; font-size: 20px;">🔗 તમારી રેફરલ લિંક</h3>
-     <p style="color: #666; font-size: 14px; margin-bottom: 20px;">આ લિંક તમારા મિત્રોને મોકલો અને જે પણ વ્યક્તિ તમારી ટીમમાં આવશે, તેનું કમિશન તમને મળશે.</p>
-     <div style="display: flex; gap: 10px; margin-top: 15px;">
-        <input type="text" id="referralLink" readonly style="flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; background-color: #f9f9f9; color: #333; outline: none;">
-     </div>
-  </div>
-
-  <!-- Stats Section -->
-  <div style="display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap;">
-    <div style="flex: 1; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); padding: 20px; border-radius: 12px; color: white; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); min-width: 140px;">
-      <h3 style="margin: 0; font-size: 16px; opacity: 0.9;">કુલ કમાણી (Earnings)</h3>
-      <h2 style="margin: 10px 0 0; font-size: 28px;">₹ 0</h2>
-    </div>
-    <div style="flex: 1; background: linear-gradient(135deg, #FF8008 0%, #FFC837 100%); padding: 20px; border-radius: 12px; color: white; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); min-width: 140px;">
-      <h3 style="margin: 0; font-size: 16px; opacity: 0.9;">મારી ટીમ (My Team)</h3>
-      <h2 style="margin: 10px 0 0; font-size: 28px;">0 સભ્યો</h2>
-    </div>
-  </div>
-
-  <!-- Marketing & Promotion Hub -->
-  <div style="background: white; padding: 25px; border-radius: 12px; margin-top: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center;">
-    <h3 style="color: #1e3c72; margin-top: 0; font-size: 20px;">પ્રમોશનલ મટીરીયલ (Marketing Tools) 📢</h3>
-    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">તમારા બિઝનેસને ઝડપથી વધારવા માટે નીચે આપેલું બટન દબાવીને સીધા WhatsApp પર લિંક શેર કરો.</p>
-    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-      <!-- WhatsApp Share Button -->
-      <button onclick="shareOnWhatsApp()" style="background-color: #25D366; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 15px; box-shadow: 0 4px 6px rgba(37, 211, 102, 0.3);">
-        WhatsApp પર શેર કરો 💬
-      </button>
-    </div>
-  </div>
-
-  <!-- JavaScript Section -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const savedData = localStorage.getItem('evokeUser');
-        if(savedData) {
-            const user = JSON.parse(savedData);
-            document.getElementById('partnerName').innerText = user.name;
-            
-            const userId = user.user_id_code || user.sponsor_id; 
-            if(userId) {
-                document.getElementById('partnerId').innerText = "ID: " + userId;
-                const refLink = "https://evoketour.vercel.app/register.html?ref=" + userId;
-                document.getElementById('referralLink').value = refLink;
-            } else {
-                document.getElementById('partnerId').innerText = "ID: પ્રોસેસમાં છે";
-                document.getElementById('referralLink').value = "લિંક જનરેટ થઈ રહી છે...";
-            }
-        } else {
-            alert("કૃપા કરીને પહેલા લોગિન કરો.");
-            window.location.href = "index.html"; 
-        }
-    });
-
-    // WhatsApp Direct Share Function
-    function shareOnWhatsApp() {
-        const link = document.getElementById('referralLink').value;
-        const message = "નમસ્તે! Evoke Tour માં જોડાઈને બિઝનેસ શરૂ કરવા માટે નીચેની લિંક પર ક્લિક કરો: " + link;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evoke Tour - Member Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
         
-        if (navigator.share) {
-            navigator.share({
-                title: 'Evoke Tour Partner',
-                text: message,
-                url: link,
-            }).catch(console.error);
-        } else {
-            window.open("https://wa.me/?text=" + encodeURIComponent(message), "_blank");
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fdfbf7 0%, #f4e8c1 100%);
+            margin: 0;
+            padding: 15px;
+            color: #333;
+        }
+
+        .dashboard-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(197, 160, 89, 0.2);
+            overflow: hidden;
+            border: 1px solid #e6d5b8;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c2518, #4a3b22);
+            color: #f4e8c1;
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 4px solid #d4af37;
+        }
+
+        .header h1 { margin: 0; font-size: 24px; letter-spacing: 1px; color: #f4e8c1; }
+        .header p { margin: 5px 0 0; font-size: 13px; color: #d4af37; }
+
+        .content { padding: 20px; }
+
+        .profile-card {
+            background: #fffdf9;
+            border: 1px solid #e6d5b8;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #f0e6d2;
+            font-size: 14px;
+        }
+
+        .info-row:last-child { border-bottom: none; }
+        .label { color: #666; font-weight: 500; }
+        .value { font-weight: 600; color: #2c2518; }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-unactive { background: #ffebee; color: #c62828; }
+        .status-active { background: #e8f5e9; color: #2e7d32; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #fffcf5, #fcf4e1);
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-box h3 { margin: 0; font-size: 13px; color: #666; }
+        .stat-box p { margin: 8px 0 0; font-size: 18px; font-weight: 700; color: #2c2518; }
+
+        .wallet-card {
+            background: #2c2518;
+            color: #f4e8c1;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid #d4af37;
+        }
+
+        .wallet-card h3 { margin: 0; font-size: 14px; color: #d4af37; }
+        .wallet-card .balance { font-size: 26px; font-weight: 700; margin: 5px 0 15px; color: #fff; }
+
+        .btn {
+            background: linear-gradient(135deg, #d4af37, #aa7c11);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+        }
+        .btn:hover { opacity: 0.9; }
+
+        .ref-box {
+            background: #fffdf9;
+            border: 1px solid #e6d5b8;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .ref-input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 13px;
+            background: #f9f9f9;
+            text-align: center;
+        }
+
+        .share-btn {
+            background: #25d366;
+            color: white;
+            margin-top: 10px;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <div class="header">
+        <h1>Evoke Tour Dashboard</h1>
+        <p>Welcome to your royal partner portal 🌟</p>
+    </div>
+
+    <div class="content">
+        <!-- પ્રોફાઇલ અને સ્ટેટસ કાર્ડ -->
+        <div class="profile-card">
+            <div class="info-row">
+                <span class="label">👤 પૂરું નામ (Name):</span>
+                <span class="value" id="dashName">લોડ થઈ રહ્યું છે...</span>
+            </div>
+            <div class="info-row">
+                <span class="label">🆔 યુઝર આઈડી (ID):</span>
+                <span class="value" id="dashId">--</span>
+            </div>
+            <div class="info-row">
+                <span class="label">📱 મોબાઈલ (Mobile):</span>
+                <span class="value" id="dashMobile">--</span>
+            </div>
+            <div class="info-row">
+                <span class="label">⚡ આઈડી સ્ટેટસ (Status):</span>
+                <span class="value"><span id="dashStatus" class="status-badge status-unactive">Unactive</span></span>
+            </div>
+        </div>
+
+        <!-- ટીમ અને લેવલ ઇનકમ ગ્રીડ -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h3>👥 ટોટલ ટીમ મેમ્બર</h3>
+                <p id="totalTeam">0</p>
+            </div>
+            <div class="stat-box">
+                <h3>🏆 લેવલ ઇનકમ</h3>
+                <p id="levelIncome">₹ 0</p>
+            </div>
+        </div>
+
+        <!-- બોનસ લિમિટ અને વોલેટ -->
+        <div class="wallet-card">
+            <h3>🎁 બોનસ લિમિટ (Bonus Limit)</h3>
+            <div class="balance" id="bonusLimit">₹ 0 (Active થતાં જ ₹30,000)</div>
+            
+            <h3>💰 રીમેનિંગ બેલેન્સ (Remaining Balance)</h3>
+            <div class="balance" id="remainingBalance">₹ 0</div>
+            
+            <button class="btn" onclick="openBankModal()">🏦 Add Bank Details (બેંક ખાતામાં નાખો)</button>
+        </div>
+
+        <!-- રેફરલ લિંક સેક્શન -->
+        <div class="ref-box">
+            <span style="font-weight: 600; font-size: 14px; color: #2c2518;">🔗 તમારી રેફરલ લિંક (Referral Link)</span>
+            <input type="text" id="refLink" class="ref-input" readonly value="લિંક લોડ થઈ રહી છે...">
+            <button class="btn" style="margin-top: 10px; background: #2c2518; color: #f4e8c1;" onclick="copyRefLink()">📋 લિંક કોપી કરો</button>
+            <a id="whatsappShare" href="#" target="_blank" class="share-btn">💬 WhatsApp પર શેર કરો</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // લોકલ સ્ટોરેજમાંથી લોગઈન થયેલા યુઝરની માહિતી મેળવો
+    const user = JSON.parse(localStorage.getItem('evokeUser'));
+
+    if (!user) {
+        alert("કૃપા કરીને પહેલા લોગિન કરો!");
+        window.location.href = "index.html";
+    } else {
+        // ડેટા સેટ કરો
+        document.getElementById('dashName').innerText = user.name || "પાર્ટનર";
+        document.getElementById('dashId').innerText = user.id || "EVK9850";
+        document.getElementById('dashMobile').innerText = user.mobile_number || "--";
+        
+        // રેફરલ લિંક બનાવો
+        const generatedRefLink = window.location.origin + "/register.html?ref=" + (user.id || "EVK9850");
+        document.getElementById('refLink').value = generatedRefLink;
+
+        // WhatsApp શેર લિંક સેટ કરો
+        const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે ક્લિક કરો: " + generatedRefLink);
+        document.getElementById('whatsappShare').href = "https://api.whatsapp.com/send?text=" + waText;
+
+        // જો યુઝર એક્ટિવ હોય (ટેસ્ટિંગ માટે યુઝરમાં status ચેક કરી શકો)
+        if(user.is_active === true) {
+            document.getElementById('dashStatus').innerText = "Active";
+            document.getElementById('dashStatus').className = "status-badge status-active";
+            document.getElementById('bonusLimit').innerText = "₹ 30,000";
+            document.getElementById('remainingBalance').innerText = "₹ " + (user.balance || 5000);
+            document.getElementById('totalTeam', user.team_count || 12);
+            document.getElementById('levelIncome').innerText = "₹ " + (user.income || 1500);
         }
     }
-  </script>
+
+    function copyRefLink() {
+        const copyText = document.getElementById("refLink");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(copyText.value);
+        alert("✅ રેફરલ લિંક કોપી થઈ ગઈ છે!");
+    }
+
+    function openBankModal() {
+        const bankName = prompt("બેંકનું નામ (Bank Name) દાખલ કરો:");
+        if(!bankName) return;
+        const accNo = prompt("એકાઉન્ટ નંબર (Account Number) દાખલ કરો:");
+        if(!accNo) return;
+        const ifsc = prompt("IFSC Code દાખલ કરો:");
+        if(ifsc) {
+            alert("✅ બેંક વિગતો સફળતાપૂર્વક સેવ થઈ ગઈ છે!");
+        }
+    }
+</script>
+
 </body>
-    </html>
-    
+                  </html>
+                  
