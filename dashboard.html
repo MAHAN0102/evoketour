@@ -195,7 +195,6 @@
     const myDb = supabase.createClient(supabaseUrl, supabaseKey);
 
     async function loadDashboard() {
-        // લોકલસ્ટોરેજમાંથી યુઝર મેળવો
         let user = JSON.parse(localStorage.getItem('evokeUser'));
 
         if (!user || !user.mobile_number) {
@@ -204,7 +203,7 @@
             return;
         }
 
-        // Supabase માંથી લેટેસ્ટ ડેટા ખેંચી લાવો જેથી નામ અને આઈડી પાક્કા મળી જાય
+        // Supabase માંથી લેટેસ્ટ ડેટા ખેંચી લાવવો
         const { data, error } = await myDb
             .from('users')
             .select('*')
@@ -212,27 +211,33 @@
             .single();
 
         if (data) {
-            user = data; // ડેટાબેઝનો લેટેસ્ટ ડેટા સેટ કરો
+            user = data; 
         }
 
-        // સ્ક્રીન પર નામ, આઈડી અને મોબાઈલ સેટ કરો
         const formattedId = "ET" + (user.id || "1001");
         document.getElementById('dashName').innerText = user.name || "પાર્ટનર";
         document.getElementById('dashId').innerText = formattedId;
         document.getElementById('dashMobile').innerText = user.mobile_number || "----------";
-        document.getElementById('totalTeam').innerText = user.team_count || 0;
-        document.getElementById('levelIncome').innerText = "₹ " + (user.earning || 0);
+        document.getElementById('totalTeam').innerText = user.direct_invites || user.team_count || 0;
 
-        // Active / Unactive સ્ટેટસ
-        if (user.is_active === true) {
+        // જો યુઝર Status "Active" હોય તો જ લિમિટ અને બેલેન્સ દેખાડવું
+        if (user.status === "Active") {
             document.getElementById('dashStatusText').innerText = "(Active)";
             document.getElementById('profileCardBg').style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
-            document.getElementById('totalLimit').innerText = "₹ 30,000";
-            document.getElementById('earningAmount').innerText = "₹ " + (user.earning || 0);
-            document.getElementById('remainingLimit').innerText = "₹ " + (30000 - (user.earning || 0));
+            
+            const totalLim = user.total_limit || 30000;
+            const earn = user.total_earning || user.earning || 0;
+            const remLim = totalLim - earn;
+
+            document.getElementById('totalLimit').innerText = "₹ " + totalLim;
+            document.getElementById('levelIncome').innerText = "₹ " + earn;
+            document.getElementById('earningAmount').innerText = "₹ " + earn;
+            document.getElementById('remainingLimit').innerText = "₹ " + remLim;
         } else {
+            // Unactive હોય ત્યારે બધું 0 જ બતાવવું
             document.getElementById('dashStatusText').innerText = "(Unactive)";
             document.getElementById('totalLimit').innerText = "0";
+            document.getElementById('levelIncome').innerText = "₹ 0";
             document.getElementById('earningAmount').innerText = "₹ 0";
             document.getElementById('remainingLimit').innerText = "0";
         }
@@ -259,5 +264,4 @@
 </script>
 
 </body>
-            </html>
-            
+</html>
