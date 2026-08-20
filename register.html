@@ -3,14 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Evoke Tour - Registration</title>
+  <title>Evoke Tour - Registration & Welcome Letter</title>
   <!-- Supabase Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body style="font-family: Arial, sans-serif; background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; padding: 20px; box-sizing: border-box;">
-  
-  <div style="background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center;">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+    body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; padding: 20px; box-sizing: border-box; }
     
+    .card { background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center; }
+    
+    /* વેલકમ લેટર સ્ટાઈલ */
+    #welcomeLetter { display: none; border-top: 8px solid #28a745; text-align: left; }
+    .logo { font-size: 28px; font-weight: 800; color: #28a745; margin-bottom: 5px; text-align: center; }
+    .title { color: #00838f; font-weight: 600; margin-bottom: 20px; text-align: center; font-size: 18px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+    .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f1f1; font-size: 15px; }
+    .label { color: #666; }
+    .value { font-weight: 600; color: #333; }
+    .print-btn { margin-top: 25px; width: 100%; background: #28a745; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: 0.3s; }
+    .print-btn:hover { background: #218838; }
+  </style>
+</head>
+<body>
+  
+  <div class="card" id="formCard">
     <h1 style="color: #00838f; margin-bottom: 5px; font-size: 28px; font-weight: 900; letter-spacing: 1px;">Evoke Tour 4.0</h1>
     <p style="color: #555; margin-bottom: 25px; font-size: 16px; font-weight: bold;">પ્રોફેશનલ રજીસ્ટ્રેશન ફોર્મ 📝</p>
 
@@ -45,15 +60,49 @@
     <div style="margin-top: 20px;">
       <p style="font-size: 14px; color: #666;">પહેલેથી એકાઉન્ટ છે? <a href="index.html" style="color: #ff9800; text-decoration: none; font-weight: bold;">અહીં લોગિન કરો</a></p>
     </div>
-
   </div>
 
-  <!-- જાવાસ્ક્રિપ્ટ અને ડેટાબેઝ કનેક્શન -->
+  <!-- સફળ રજીસ્ટ્રેશન પછી દેખાતો પ્રોફેશનલ વેલકમ લેટર -->
+  <div class="card" id="welcomeLetter">
+    <div class="logo">EVOKETOUR</div>
+    <div class="title">OFFICIAL JOINING LETTER</div>
+    
+    <p style="font-size: 14px; color: #555;">Dear <span id="letName" style="font-weight: bold; color: #333;">--</span>,</p>
+    <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Congratulations! 🎉 You've successfully registered at EVOKETOUR.</p>
+
+    <div class="data-row"><span class="label">👤 પૂરું નામ (Name):</span><span class="value" id="letFullName">--</span></div>
+    <div class="data-row"><span class="label">🆔 યુઝર આઈડી (ID):</span><span class="value" id="letUserId" style="color: #00838f;">--</span></div>
+    <div class="data-row"><span class="label">📱 મોબાઈલ (Mobile):</span><span class="value" id="letMobile">--</span></div>
+    <div class="data-row"><span class="label">🔑 પાસવર્ડ (Password):</span><span class="value" id="letPass">--</span></div>
+
+    <p style="font-size: 12px; color: #777; margin-top: 20px; text-align: center;">Keep it up! See you at the top!<br><b>Winning Regards, EVOKETOUR</b></p>
+
+    <button class="print-btn" onclick="window.print()">પ્રિન્ટ / PDF સેવ કરો</button>
+    <div style="margin-top: 15px; text-align: center;">
+      <a href="index.html" style="color: #00838f; font-size: 14px; text-decoration: none; font-weight: bold;">➡️ ડેશબોર્ડ પર લોગિન કરો</a>
+    </div>
+  </div>
+
+  <!-- જાવાસ્ક્રિપ્ટ લોજિક -->
   <script>
     const supabaseUrl = 'https://imggtidezvfxxpovftyx.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltZ2d0aWRlenZmeHhwb3ZmdHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwMzk2MDQsImV4cCI6MjEwMjYxNTYwNH0.R386PRqplXZeJsAZk_kLgCi-MDGzOeaoVdHAB7TGiJ8';
     
     const myDb = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // URL માંથી ?ref= કોડ ઓટોમેટિક વાંચીને સ્પોન્સર આઈડીના ખાનામાં મુકવા માટે
+    window.addEventListener('DOMContentLoaded', (event) => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const refId = urlParams.get('ref');
+        if (refId) {
+            const sponsorInput = document.getElementById('sponsor_id');
+            if (sponsorInput) {
+                sponsorInput.value = refId;
+                sponsorInput.readOnly = true;
+                sponsorInput.style.backgroundColor = "#e9ecef";
+            }
+        }
+    });
 
     async function registerPartner(event) {
       event.preventDefault();
@@ -68,7 +117,7 @@
       const password = document.getElementById('password').value;
 
       try {
-        // ૧. ચેક કરો કે આ નંબર પહેલેથી રજીસ્ટર તો નથી ને?
+        // ૧. ચેક કરો કે આ મોબાઈલ નંબર પહેલેથી રજીસ્ટર તો નથી ને?
         const { data: existingUser, error: checkError } = await myDb
           .from('users')
           .select('mobile_number')
@@ -82,19 +131,42 @@
           return;
         }
 
-        // ૨. નવા યુઝરનો ડેટા સેવ કરો
+        // ૨. નવા યુઝરનો ડેટા ડેટાબેઝમાં સેવ કરો અને રિટર્ન ડેટા મેળવો
         const { data, error } = await myDb
           .from('users')
           .insert([
-            { sponsor_id: sponsorId, name: fullName, mobile_number: mobile, password: password }
-          ]);
+            { sponsor_id: sponsorId, name: fullName, mobile_number: mobile, password: password, status: 'Pending' }
+          ])
+          .select();
 
         if (error) {
           alert("❌ રજીસ્ટ્રેશનમાં ભૂલ: " + error.message);
         } else {
-          alert("✅ સફળતાપૂર્વક રજીસ્ટ્રેશન થઈ ગયું છે! હવે તમે લોગિન કરી શકો છો.");
-          // રજીસ્ટ્રેશન પછી સીધા લોગિન પેજ પર મોકલવા માટે
-          window.location.href = "index.html"; 
+          // ડેટાબેઝમાંથી મળેલો આઈડી અથવા ડિફોલ્ટ આઈડી મેળવો
+          const userId = data && data.length > 0 ? data[0].id : "1001";
+          const formattedId = "ET" + userId;
+
+          // લોકલસ્ટોરેજમાં પણ ડેટા સેવ કરી રાખો જેથી લોગિનમાં આસાની રહે
+          const userData = {
+            id: userId,
+            name: fullName,
+            mobile_number: mobile,
+            status: "Pending",
+            earning: 0,
+            team_count: 0
+          };
+          localStorage.setItem('evokeUser', JSON.stringify(userData));
+
+          // ૩. ફોર્મ કાર્ડ છુપાવો અને સુંદર વેલકમ લેટર બતાવો
+          document.getElementById('formCard').style.display = 'none';
+          document.getElementById('welcomeLetter').style.display = 'block';
+
+          // લેટરમાં વિગતો ભરો
+          document.getElementById('letName').innerText = fullName;
+          document.getElementById('letFullName').innerText = fullName;
+          document.getElementById('letUserId').innerText = formattedId;
+          document.getElementById('letMobile').innerText = mobile;
+          document.getElementById('letPass').innerText = password;
         }
       } catch (err) {
         alert("❌ સર્વર એરર: " + err.message);
@@ -104,82 +176,5 @@
     }
   </script>
 </body>
-</html>
-<script>
-  const supabaseUrl = 'https://imggtidezvfxxpovftyx.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltZ2d0aWRlenZmeHhwb3ZmdHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwMzk2MDQsImV4cCI6MjEwMjYxNTYwNH0.R386PRqplXZeJsAZk_kLgCi-MDGzOeaoVdHAB7TGiJ8';
+  </html>
   
-  const myDb = supabase.createClient(supabaseUrl, supabaseKey);
-
-  // જાદુઈ કોડ: પેજ લોડ થાય ત્યારે URL માંથી 'ref' (સ્પોન્સર ID) શોધો અને બોક્સમાં ભરી દો
-  window.onload = function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const refId = urlParams.get('ref');
-    
-    if (refId) {
-      const sponsorInput = document.getElementById('sponsor_id');
-      sponsorInput.value = refId; // બોક્સમાં ઓટોમેટિક ID લખાઈ જશે
-      sponsorInput.readOnly = true; // યુઝર તેને બદલી નહીં શકે
-      sponsorInput.style.backgroundColor = "#e9ecef"; // કલર થોડો ગ્રે થશે જેથી ખબર પડે કે આ ફિક્સ છે
-    }
-  };
-
-  async function registerPartner(event) {
-    event.preventDefault();
-    
-    const submitBtn = document.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerText;
-    submitBtn.innerText = 'પ્રોસેસ થઈ રહ્યું છે... ⏳';
-
-    const sponsorId = document.getElementById('sponsor_id').value;
-    const fullName = document.getElementById('full_name').value;
-    const mobile = document.getElementById('mobile').value;
-    const password = document.getElementById('password').value;
-
-    try {
-      const { data: existingUser, error: checkError } = await myDb
-        .from('users')
-        .select('mobile_number')
-        .eq('mobile_number', mobile);
-      
-      if (checkError) throw checkError;
-
-      if (existingUser && existingUser.length > 0) {
-        alert("❌ આ મોબાઈલ નંબર પહેલેથી જ રજીસ્ટર થયેલો છે. કૃપા કરીને લોગિન કરો.");
-        submitBtn.innerText = originalText;
-        return;
-      }
-
-      const { data, error } = await myDb
-        .from('users')
-        .insert([
-          { sponsor_id: sponsorId, name: fullName, mobile_number: mobile, password: password }
-        ]);
-
-      if (error) {
-        alert("❌ રજીસ્ટ્રેશનમાં ભૂલ: " + error.message);
-      } else {
-        alert("✅ સફળતાપૂર્વક રજીસ્ટ્રેશન થઈ ગયું છે! હવે તમે લોગિન કરી શકો છો.");
-        window.location.href = "index.html"; 
-      }
-    } catch (err) {
-      alert("❌ સર્વર એરર: " + err.message);
-    }
-    
-    submitBtn.innerText = originalText;
-  }
-</script>
-  <script>
-    // URL માંથી ?ref= કોડ ઓટોમેટિક વાંચીને સ્પોન્સર આઈડીના ખાનામાં મુકવા માટે
-    window.addEventListener('DOMContentLoaded', (event) => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const refId = urlParams.get('ref');
-        if (refId) {
-            const sponsorInput = document.getElementById('sponsor_id'); // અથવા તમારા ફોર્મના ઇનપુટનું ID
-            if (sponsorInput) {
-                sponsorInput.value = refId;
-            }
-        }
-    });
-  </script>
-
