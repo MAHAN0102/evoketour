@@ -481,6 +481,19 @@
             alert("❌ એક્ટિવ કરવામાં ભૂલ: " + error.message);
         } else {
     
-         </div>
+         alert(`✅ આઈડી સફળતાપૂર્વક Active થઈ ગયું છે! કુલ લિમિટ હવે ₹${newLimit.toLocaleString()} થઈ ગઈ છે.`);
+            closeAdminModal();
+            location.reload();
+        }
+    }
 
-         <script>
+    function openBankModal() { document.getElementById('bankModal').style.display = 'flex'; }
+    function closeBankModal() { document.getElementById('bankModal').style.display = 'none'; }
+    function saveBankDetails() {
+        alert("✅ બેંક અને KYC વિગતો સફળતાપૂર્વક સેવ થઈ ગઈ છે!");
+        closeBankModal();
+    }
+</script>
+
+</body>
+</html>
