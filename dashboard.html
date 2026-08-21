@@ -26,24 +26,23 @@
             border: 1px solid #e6d5b8;
         }
 
-        /* પ્રોફેશનલ સ્ટાઇલિશ લોગો હેડર (ડાર્ક બેકગ્રાઉન્ડથી ઢંકાય નહીં તે માટે પરફેક્ટ ડિઝાઇન) */
+        /* એરર ફ્રી પ્રોફેશનલ હેડર (બ્રાન્ડ નામ) */
         .header {
-            background: #ffffff;
-            padding: 15px;
+            background: #2c2518;
+            padding: 18px;
             text-align: center;
             border-bottom: 4px solid #d4af37;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        .brand-logo {
-            font-size: 24px;
-            font-weight: 800;
-            color: #2c2518;
-            letter-spacing: 2px;
+        .brand-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f4e8c1;
+            letter-spacing: 1.5px;
             margin: 0;
-            text-transform: uppercase;
         }
-        .brand-logo span { color: #ff7e5f; }
+        .brand-title span { color: #ff7e5f; }
 
         .content { padding: 15px; }
 
@@ -176,9 +175,9 @@
 <body>
 
 <div class="dashboard-container">
-    <!-- ક્લિયર અને પ્રોફેશનલ બ્રાન્ડ લોગો હેડર -->
+    <!-- એરર ફ્રી ક્લીન હેડર -->
     <div class="header">
-        <h1 class="brand-logo">EVOKE <span>TOUR</span></h1>
+        <h2 class="brand-title">EVOKE <span>TOUR</span> DASHBOARD</h2>
     </div>
 
     <div class="content">
@@ -367,7 +366,7 @@
         document.getElementById('directTeamCount').innerText = totalDirectCount;
         document.getElementById('totalTeam').innerText = totalTeamCount;
 
-        // ટેબલમાં એક્યુરેટ કાઉન્ટ અને પેઆઉટ દર્શાવો
+        // ટેબલમાં સચોટ કાઉન્ટ અને પેઆઉટ દર્શાવો
         document.getElementById('l1Count').innerText = l1; document.getElementById('l1Pay').innerText = "₹" + p1;
         document.getElementById('l2Count').innerText = l2; document.getElementById('l2Pay').innerText = "₹" + p2;
         document.getElementById('l3Count').innerText = l3; document.getElementById('l3Pay').innerText = "₹" + p3;
@@ -378,12 +377,13 @@
         document.getElementById('l8Count').innerText = l8; document.getElementById('l8Pay').innerText = "₹" + p8;
         document.getElementById('l9Count').innerText = l9; document.getElementById('l9Pay').innerText = "₹" + p9;
 
-        // Active સ્ટેટસ અને બેલેન્સ શીટ (મલ્ટીપલ લિમિટ અને રીમેનિંગ લિમિટ ફિક્સ)
+        let currentLimit = user.total_limit || 30000;
+
+        // Active અથવા Unactive બંને સ્થિતિમાં લિમિટ બરાબર દર્શાવો
         if (user.status === "Active") {
             document.getElementById('dashStatusText').innerText = "(Active)";
             document.getElementById('profileCardBg').style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
             
-            let currentLimit = user.total_limit || 30000;
             let currentEarning = calculatedEarning;
             let remaining = currentLimit - currentEarning;
 
@@ -393,34 +393,46 @@
             document.getElementById('remainingLimit').innerText = "₹ " + Math.max(0, remaining).toLocaleString();
         } else {
             document.getElementById('dashStatusText').innerText = "(Unactive)";
-            let currentLimit = user.total_limit || 30000;
             document.getElementById('totalLimit').innerText = "₹ " + currentLimit.toLocaleString();
             document.getElementById('levelIncome').innerText = "₹ 0";
             document.getElementById('earningAmount').innerText = "₹ 0";
             document.getElementById('remainingLimit').innerText = "₹ " + currentLimit.toLocaleString();
         }
 
-        // રેફરલ લિંક અને વોટ્સએપ શેર ફિક્સ
+        // રેફરલ લિંક સેટ કરો
         currentRefLink = window.location.origin + "/register.html?ref=" + formattedId;
     }
 
     loadDashboard();
 
+    // પરફેક્ટ કોપી લિંક ફંક્શન
     window.copyRefLink = function() {
-        navigator.clipboard.writeText(currentRefLink).then(() => {
-            alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
-        }).catch(err => {
-            // ફોલબેક મેથડ જો ક્લિપબોર્ડ API બ્લોક હોય
-            let tempInput = document.createElement("input");
-            tempInput.value = currentRefLink;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
-            alert("✅ રેફરલ લિંક કોપી થઈ ગઈ છે!");
-        });
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(currentRefLink).then(() => {
+                alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
+            }).catch(() => {
+                fallbackCopyText(currentRefLink);
+            });
+        } else {
+            fallbackCopyText(currentRefLink);
+        }
     }
 
+    function fallbackCopyText(text) {
+        let tempInput = document.createElement("input");
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+            document.execCommand('copy');
+            alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
+        } catch (err) {
+            alert("❌ લિંક કોપી કરવામાં નિષ્ફળ!");
+        }
+        document.body.removeChild(tempInput);
+    }
+
+    // પરફેક્ટ વોટ્સએપ શેર ફંક્શન
     window.shareOnWhatsApp = function() {
         const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે અહીં ક્લિક કરો: " + currentRefLink);
         window.open("https://api.whatsapp.com/send?text=" + waText, '_blank');
@@ -453,8 +465,6 @@
         let newLimit = 30000;
         if (targetUser && targetUser.total_limit) {
             newLimit = Number(targetUser.total_limit) + 30000;
-        } else {
-            newLimit = 60000; // જો પહેલેથી 30000 હોય તો 60000 થશે
         }
 
         const { data, error } = await myDb
@@ -465,14 +475,10 @@
         if (error) {
             alert("❌ એક્ટિવ કરવામાં ભૂલ: " + error.message);
         } else {
-            alert(`✅ આઈડી સફળતાપૂર્વક Active થઈ ગયું છે! કુલ લિમિટ હવે વધીને ₹${newLimit.toLocaleString()} થઈ ગઈ છે.`);
+            alert(`✅ આઈડી સફળતાપૂર્વક Active થઈ ગયું છે! કુલ લિમિટ હવે ₹${newLimit.toLocaleString()} થઈ ગઈ છે.`);
             closeAdminModal();
             location.reload();
         }
     }
 
-    function openBankModal() { document.getElementById('bankModal').style.display = 'flex'; }
-    function cl
-</script>
-</body>
-</html>
+    function openBankModal() { document.g
