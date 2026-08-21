@@ -452,6 +452,57 @@
         alert("✅ બેંક અને KYC વિગતો સફળતાપૂર્વક સેવ થઈ ગઈ છે!");
         closeBankModal();
     }
+  
+    // રેફરલ લિંક કોપી કરવા માટેનું એકદમ સચોટ ફંક્શન
+window.copyRefLink = function() {
+    // લિંક ફેચ કરો
+    const user = JSON.parse(localStorage.getItem('evokeUser'));
+    if (!user) return;
+    const formattedId = "ET" + (user.id || "1001");
+    const refLinkStr = window.location.origin + "/register.html?ref=" + formattedId;
+
+    // ક્લિપબોર્ડ API નો ઉપયોગ
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(refLinkStr).then(() => {
+            alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
+        }).catch(err => {
+            fallbackCopyText(refLinkStr);
+        });
+    } else {
+        // જો બ્રાઉઝર સપોર્ટ ન કરે તો ફોલબેક
+        fallbackCopyText(refLinkStr);
+    }
+}
+
+// ફોલબેક કોપી ફંક્શન
+function fallbackCopyText(text) {
+    let tempInput = document.createElement("input");
+    tempInput.value = text;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    tempInput.setSelectionRange(0, 99999); /* મોબાઈલ માટે */
+    try {
+        document.execCommand('copy');
+        alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
+    } catch (err) {
+        alert("❌ લિંક કોપી કરવામાં નિષ્ફળ!");
+    }
+    document.body.removeChild(tempInput);
+}
+
+// વોટ્સએપ પર શેર કરવા માટેનું ફંક્શન
+window.shareOnWhatsApp = function() {
+    const user = JSON.parse(localStorage.getItem('evokeUser'));
+    if (!user) return;
+    const formattedId = "ET" + (user.id || "1001");
+    const refLinkStr = window.location.origin + "/register.html?ref=" + formattedId;
+    
+    const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે અહીં ક્લિક કરો: " + refLinkStr);
+    
+    // સીધું જ નવી ટેબમાં વોટ્સએપ ઓપન કરશે
+    window.open("https://api.whatsapp.com/send?text=" + waText, '_blank');
+}
+    
 </script>
 
 </body>
