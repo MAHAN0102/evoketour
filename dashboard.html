@@ -26,7 +26,6 @@
             border: 1px solid #e6d5b8;
         }
 
-        /* એરર ફ્રી પ્રોફેશનલ હેડર (બ્રાન્ડ નામ) */
         .header {
             background: #2c2518;
             padding: 18px;
@@ -143,7 +142,7 @@
         .btn-cyan { background: #00bcd4; color: white; }
         .btn-green { background: #25d366; color: white; }
         .btn-orange { background: #ff9800; color: white; }
-        .btn-admin { background: #d32f2f; color: white; display: none; }
+        .btn-admin { background: #d32f2f; color: white; display: none; } /* ફિક્સ: ફક્ત એડમિન માટે જ દેખાશે */
 
         .modal {
             display: none;
@@ -175,7 +174,6 @@
 <body>
 
 <div class="dashboard-container">
-    <!-- એરર ફ્રી ક્લીન હેડર -->
     <div class="header">
         <h2 class="brand-title">EVOKE <span>TOUR</span> DASHBOARD</h2>
     </div>
@@ -238,6 +236,7 @@
 
         <button class="action-btn btn-cyan" onclick="openBankModal()">🏦 Bank & KYC Details (બેંક વિગતો)</button>
         <button class="action-btn btn-orange" onclick="copyRefLink()">📋 Copy Referral Link (લિંક કોપી કરો)</button>
+        <!-- એડમિન એક્ટિવેશન બટન (માત્ર Haresh Patel માટે જ દેખાશે) -->
         <button class="action-btn btn-admin" id="adminActivationBtn" onclick="openAdminModal()">👑 Admin Active Panel (Haresh Patel)</button>
         <button class="action-btn btn-green" onclick="shareOnWhatsApp()">💬 Share WhatsApp Link (વોટ્સએપ શેર)</button>
     </div>
@@ -304,12 +303,11 @@
         document.getElementById('dashId').innerText = formattedId;
         document.getElementById('dashMobile').innerText = user.mobile_number || "----------";
         
-        // Haresh Patel માટે જ એડમિન બટન
+        // Haresh Patel માટે જ એડમિન એક્ટિવેશન બટન ડિસ્પ્લે થશે
         if (user.name && user.name.toLowerCase().includes("haresh")) {
             document.getElementById('adminActivationBtn').style.display = 'block';
         }
 
-        // ડાયરેક્ટ મેમ્બર્સ (Level 1) ના નામ અને સ્ટેટસ ફેચ કરવા (માત્ર Active મેમ્બર્સની જ કમિશનમાં ગણતરી)
         const { data: directMembers, error: dirError } = await myDb
             .from('users')
             .select('name, status, id')
@@ -325,7 +323,7 @@
             totalDirectCount = directMembers.length;
             directMembers.forEach(mem => {
                 let isActive = mem.status === "Active";
-                if (isActive) activeL1Count++; // માત્ર Active મેમ્બર્સ જ કમિશનમાં ગણાશે
+                if (isActive) activeL1Count++;
                 
                 let badgeClass = isActive ? "badge-active" : "badge-unactive";
                 let statusText = isActive ? "Active" : "Unactive";
@@ -366,7 +364,6 @@
         document.getElementById('directTeamCount').innerText = totalDirectCount;
         document.getElementById('totalTeam').innerText = totalTeamCount;
 
-        // ટેબલમાં સચોટ કાઉન્ટ અને પેઆઉટ દર્શાવો
         document.getElementById('l1Count').innerText = l1; document.getElementById('l1Pay').innerText = "₹" + p1;
         document.getElementById('l2Count').innerText = l2; document.getElementById('l2Pay').innerText = "₹" + p2;
         document.getElementById('l3Count').innerText = l3; document.getElementById('l3Pay').innerText = "₹" + p3;
@@ -379,7 +376,6 @@
 
         let currentLimit = user.total_limit || 30000;
 
-        // Active અથવા Unactive બંને સ્થિતિમાં લિમિટ બરાબર દર્શાવો
         if (user.status === "Active") {
             document.getElementById('dashStatusText').innerText = "(Active)";
             document.getElementById('profileCardBg').style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
@@ -399,14 +395,19 @@
             document.getElementById('remainingLimit').innerText = "₹ " + currentLimit.toLocaleString();
         }
 
-        // રેફરલ લિંક સેટ કરો
+        // લિંક સેટ કરો
         currentRefLink = window.location.origin + "/register.html?ref=" + formattedId;
     }
 
     loadDashboard();
 
-    // પરફેક્ટ કોપી લિંક ફંક્શન
+    // 100% કામ કરે તેવું કોપી લિંક ફંક્શન
     window.copyRefLink = function() {
+        if (!currentRefLink) {
+            let user = JSON.parse(localStorage.getItem('evokeUser'));
+            currentRefLink = window.location.origin + "/register.html?ref=ET" + (user ? user.id : "1001");
+        }
+
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(currentRefLink).then(() => {
                 alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
@@ -432,8 +433,12 @@
         document.body.removeChild(tempInput);
     }
 
-    // પરફેક્ટ વોટ્સએપ શેર ફંક્શન
+    // 100% કામ કરે તેવું વોટ્સએપ શેર ફંક્શન
     window.shareOnWhatsApp = function() {
+        if (!currentRefLink) {
+            let user = JSON.parse(localStorage.getItem('evokeUser'));
+            currentRefLink = window.location.origin + "/register.html?ref=ET" + (user ? user.id : "1001");
+        }
         const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે અહીં ક્લિક કરો: " + currentRefLink);
         window.open("https://api.whatsapp.com/send?text=" + waText, '_blank');
     }
@@ -475,10 +480,4 @@
         if (error) {
             alert("❌ એક્ટિવ કરવામાં ભૂલ: " + error.message);
         } else {
-            alert(`✅ આઈડી સફળતાપૂર્વક Active થઈ ગયું છે! કુલ લિમિટ હવે ₹${newLimit.toLocaleString()} થઈ ગઈ છે.`);
-            closeAdminModal();
-            location.reload();
-        }
-    }
-
-    function openBankModal() { document.g
+    
