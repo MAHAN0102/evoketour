@@ -26,7 +26,7 @@
             border: 1px solid #e6d5b8;
         }
 
-        /* લોગો માટે પ્રોફેશનલ વ્હાઇટ બેકગ્રાઉન્ડ હેડર */
+        /* પ્રોફેશનલ સ્ટાઇલિશ લોગો હેડર (ડાર્ક બેકગ્રાઉન્ડથી ઢંકાય નહીં તે માટે પરફેક્ટ ડિઝાઇન) */
         .header {
             background: #ffffff;
             padding: 15px;
@@ -35,11 +35,15 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        .header img {
-            width: 160px;
-            height: auto;
-            display: inline-block;
+        .brand-logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: #2c2518;
+            letter-spacing: 2px;
+            margin: 0;
+            text-transform: uppercase;
         }
+        .brand-logo span { color: #ff7e5f; }
 
         .content { padding: 15px; }
 
@@ -172,9 +176,9 @@
 <body>
 
 <div class="dashboard-container">
-    <!-- વ્હાઇટ બેકગ્રાઉન્ડ હેડર અને બ્રાન્ડ લોગો -->
+    <!-- ક્લિયર અને પ્રોફેશનલ બ્રાન્ડ લોગો હેડર -->
     <div class="header">
-        <img src="https://i.ibb.co/6y185h6/evoke-logo.png" alt="Evoke Tour Logo">
+        <h1 class="brand-logo">EVOKE <span>TOUR</span></h1>
     </div>
 
     <div class="content">
@@ -236,7 +240,7 @@
         <button class="action-btn btn-cyan" onclick="openBankModal()">🏦 Bank & KYC Details (બેંક વિગતો)</button>
         <button class="action-btn btn-orange" onclick="copyRefLink()">📋 Copy Referral Link (લિંક કોપી કરો)</button>
         <button class="action-btn btn-admin" id="adminActivationBtn" onclick="openAdminModal()">👑 Admin Active Panel (Haresh Patel)</button>
-        <a id="whatsappShare" href="#" target="_blank" class="action-btn btn-green">💬 Share WhatsApp Link (વોટ્સએપ શેર)</a>
+        <button class="action-btn btn-green" onclick="shareOnWhatsApp()">💬 Share WhatsApp Link (વોટ્સએપ શેર)</button>
     </div>
 </div>
 
@@ -275,6 +279,8 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltZ2d0aWRlenZmeHhwb3ZmdHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwMzk2MDQsImV4cCI6MjEwMjYxNTYwNH0.R386PRqplXZeJsAZk_kLgCi-MDGzOeaoVdHAB7TGiJ8';
     const myDb = supabase.createClient(supabaseUrl, supabaseKey);
 
+    let currentRefLink = "";
+
     async function loadDashboard() {
         let user = JSON.parse(localStorage.getItem('evokeUser'));
 
@@ -299,12 +305,12 @@
         document.getElementById('dashId').innerText = formattedId;
         document.getElementById('dashMobile').innerText = user.mobile_number || "----------";
         
-        // Haresh Patel માટે જ એડમિન પેનલ બટન
+        // Haresh Patel માટે જ એડમિન બટન
         if (user.name && user.name.toLowerCase().includes("haresh")) {
             document.getElementById('adminActivationBtn').style.display = 'block';
         }
 
-        // ડાયરેક્ટ મેમ્બર્સ (Level 1) ના નામ અને સ્ટેટસ (માત્ર Active મેમ્બર્સની જ ઇનકમ ગણવી)
+        // ડાયરેક્ટ મેમ્બર્સ (Level 1) ના નામ અને સ્ટેટસ ફેચ કરવા (માત્ર Active મેમ્બર્સની જ કમિશનમાં ગણતરી)
         const { data: directMembers, error: dirError } = await myDb
             .from('users')
             .select('name, status, id')
@@ -314,7 +320,10 @@
         directContainer.innerHTML = "";
 
         let activeL1Count = 0;
+        let totalDirectCount = 0;
+
         if (directMembers && directMembers.length > 0) {
+            totalDirectCount = directMembers.length;
             directMembers.forEach(mem => {
                 let isActive = mem.status === "Active";
                 if (isActive) activeL1Count++; // માત્ર Active મેમ્બર્સ જ કમિશનમાં ગણાશે
@@ -352,12 +361,13 @@
         let p8 = l8 * 25;
         let p9 = l9 * 25;
 
-        let totalTeamCount = (directMembers ? directMembers.length : 0) + l2 + l3 + l4 + l5 + l6 + l7 + l8 + l9;
+        let totalTeamCount = totalDirectCount + l2 + l3 + l4 + l5 + l6 + l7 + l8 + l9;
         let calculatedEarning = p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
 
-        document.getElementById('directTeamCount').innerText = directMembers ? directMembers.length : 0;
+        document.getElementById('directTeamCount').innerText = totalDirectCount;
         document.getElementById('totalTeam').innerText = totalTeamCount;
 
+        // ટેબલમાં એક્યુરેટ કાઉન્ટ અને પેઆઉટ દર્શાવો
         document.getElementById('l1Count').innerText = l1; document.getElementById('l1Pay').innerText = "₹" + p1;
         document.getElementById('l2Count').innerText = l2; document.getElementById('l2Pay').innerText = "₹" + p2;
         document.getElementById('l3Count').innerText = l3; document.getElementById('l3Pay').innerText = "₹" + p3;
@@ -368,12 +378,11 @@
         document.getElementById('l8Count').innerText = l8; document.getElementById('l8Pay').innerText = "₹" + p8;
         document.getElementById('l9Count').innerText = l9; document.getElementById('l9Pay').innerText = "₹" + p9;
 
-        // Active સ્ટેટસ અને બેલેન્સ શીટ (મલ્ટીપલ 30000 લિમિટ સપોર્ટ સાથે)
+        // Active સ્ટેટસ અને બેલેન્સ શીટ (મલ્ટીપલ લિમિટ અને રીમેનિંગ લિમિટ ફિક્સ)
         if (user.status === "Active") {
             document.getElementById('dashStatusText').innerText = "(Active)";
             document.getElementById('profileCardBg').style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
             
-            // જો ડેટાબેઝમાં કુલ લિમિટ સેવ હોય તો તે લેવી, નહીંતર ડિફોલ્ટ 30000
             let currentLimit = user.total_limit || 30000;
             let currentEarning = calculatedEarning;
             let remaining = currentLimit - currentEarning;
@@ -384,23 +393,38 @@
             document.getElementById('remainingLimit').innerText = "₹ " + Math.max(0, remaining).toLocaleString();
         } else {
             document.getElementById('dashStatusText').innerText = "(Unactive)";
-            document.getElementById('totalLimit').innerText = "₹ 30,000";
+            let currentLimit = user.total_limit || 30000;
+            document.getElementById('totalLimit').innerText = "₹ " + currentLimit.toLocaleString();
             document.getElementById('levelIncome').innerText = "₹ 0";
             document.getElementById('earningAmount').innerText = "₹ 0";
-            document.getElementById('remainingLimit').innerText = "₹ 30,000";
+            document.getElementById('remainingLimit').innerText = "₹ " + currentLimit.toLocaleString();
         }
 
-        const refLinkStr = window.location.origin + "/register.html?ref=" + formattedId;
-        const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે ક્લિક કરો: " + refLinkStr);
-        document.getElementById('whatsappShare').href = "https://api.whatsapp.com/send?text=" + waText;
-
-        window.copyRefLink = function() {
-            navigator.clipboard.writeText(refLinkStr);
-            alert("✅ રેફરલ લિંક કોપી થઈ ગઈ છે!");
-        }
+        // રેફરલ લિંક અને વોટ્સએપ શેર ફિક્સ
+        currentRefLink = window.location.origin + "/register.html?ref=" + formattedId;
     }
 
     loadDashboard();
+
+    window.copyRefLink = function() {
+        navigator.clipboard.writeText(currentRefLink).then(() => {
+            alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
+        }).catch(err => {
+            // ફોલબેક મેથડ જો ક્લિપબોર્ડ API બ્લોક હોય
+            let tempInput = document.createElement("input");
+            tempInput.value = currentRefLink;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            alert("✅ રેફરલ લિંક કોપી થઈ ગઈ છે!");
+        });
+    }
+
+    window.shareOnWhatsApp = function() {
+        const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે અહીં ક્લિક કરો: " + currentRefLink);
+        window.open("https://api.whatsapp.com/send?text=" + waText, '_blank');
+    }
 
     // એડમિન એક્ટિવેશન મોડલ
     function openAdminModal() {
@@ -420,7 +444,6 @@
             return;
         }
 
-        // પહેલા યુઝરની હાલની લિમિટ ચેક કરો જેથી 30,000 ના ગુણાંકમાં વધારી શકાય (જેમ કે 30000 -> 60000 -> 90000)
         const { data: targetUser } = await myDb
             .from('users')
             .select('total_limit')
@@ -430,6 +453,8 @@
         let newLimit = 30000;
         if (targetUser && targetUser.total_limit) {
             newLimit = Number(targetUser.total_limit) + 30000;
+        } else {
+            newLimit = 60000; // જો પહેલેથી 30000 હોય તો 60000 થશે
         }
 
         const { data, error } = await myDb
@@ -440,19 +465,11 @@
         if (error) {
             alert("❌ એક્ટિવ કરવામાં ભૂલ: " + error.message);
         } else {
-            alert(`✅ આઈડી સફળતાપૂર્વક Active થઈ ગયું છે! કુલ લિમિટ હવે ₹${newLimit.toLocaleString()} થઈ ગઈ છે.`);
+            alert(`✅ આઈડી સફળતાપૂર્વક Active થઈ ગયું છે! કુલ લિમિટ હવે વધીને ₹${newLimit.toLocaleString()} થઈ ગઈ છે.`);
             closeAdminModal();
             location.reload();
         }
     }
 
     function openBankModal() { document.getElementById('bankModal').style.display = 'flex'; }
-    function closeBankModal() { document.getElementById('bankModal').style.display = 'none'; }
-    function saveBankDetails() {
-        alert("✅ બેંક અને KYC વિગતો સફળતાપૂર્વક સેવ થઈ ગઈ છે!");
-        closeBankModal();
-    }
-</script>
-
-</body>
-</html>
+    function cl
