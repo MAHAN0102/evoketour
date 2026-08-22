@@ -453,6 +453,59 @@
         closeBankModal();
     }
 </script>
+<script>
+    // 100% વર્કિંગ કોપી અને વોટ્સએપ શેર કોડ
+    let currentRefLink = "";
 
+    // જ્યારે ડેશબોર્ડ લોડ થાય ત્યારે યુઝરની લિંક સેટ થઈ જાય
+    function setupReferralLink() {
+        let user = JSON.parse(localStorage.getItem('evokeUser'));
+        if (user && user.id) {
+            let formattedId = "ET" + user.id;
+            currentRefLink = window.location.origin + "/register.html?ref=" + formattedId;
+        } else {
+            currentRefLink = window.location.origin + "/register.html";
+        }
+    }
+
+    // લિંક કોપી કરવા માટેનું ફંક્શન
+    window.copyRefLink = function() {
+        if (!currentRefLink) { setupReferralLink(); }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(currentRefLink).then(() => {
+                alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
+            }).catch(() => {
+                fallbackCopyText(currentRefLink);
+            });
+        } else {
+            fallbackCopyText(currentRefLink);
+        }
+    }
+
+    function fallbackCopyText(text) {
+        let tempInput = document.createElement("input");
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+            document.execCommand('copy');
+            alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
+        } catch (err) {
+            alert("❌ લિંક કોપી કરવામાં નિષ્ફળ!");
+        }
+        document.body.removeChild(tempInput);
+    }
+
+    // વોટ્સએપ પર શેર કરવા માટેનું ફંક્શન
+    window.shareOnWhatsApp = function() {
+        if (!currentRefLink) { setupReferralLink(); }
+        const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે અહીં ક્લિક કરો: " + currentRefLink);
+        window.open("https://api.whatsapp.com/send?text=" + waText, '_blank');
+    }
+
+    // પેજ લોડ થતાની સાથે લિંક સેટ કરવા માટે
+    setupReferralLink();
+</script>
 </body>
 </html>
