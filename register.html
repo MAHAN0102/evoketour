@@ -92,6 +92,12 @@
 </div>
 
 <script>
+    // નવો યુઝર રજીસ્ટ્રેશન કરવા આવે ત્યારે જૂનો સેશન ડેટા સાફ કરો
+    localStorage.removeItem('evokeUser');
+
+    const supabaseUrl = 'https://imggtidezvfxxpovftyx.supabase.co';
+    ...
+    <script>
     const supabaseUrl = 'https://imggtidezvfxxpovftyx.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltZ2d0aWRlenZmeHhwb3ZmdHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwMzk2MDQsImV4cCI6MjEwMjYxNTYwNH0.R386PRqplXZeJsAZk_kLgCi-MDGzOeaoVdHAB7TGiJ8';
     const myDb = supabase.createClient(supabaseUrl, supabaseKey);
