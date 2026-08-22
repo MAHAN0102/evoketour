@@ -390,8 +390,8 @@
             document.getElementById('remainingLimit').innerText = "₹ 30,000";
         }
 
-        refLinkStr = window.location.origin + "/register.html?ref=" + formattedId;
-        waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે ક્લિક કરો: " + ref
+        const refLinkStr = window.location.origin + "/register.html?ref=" + formattedId;
+        const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે ક્લિક કરો: " + refLinkStr);
         document.getElementById('whatsappShare').href = "https://api.whatsapp.com/send?text=" + waText;
 
         window.copyRefLink = function() {
@@ -455,4 +455,4 @@
 </script>
 
 </body>
-                                                                           </html>
+    </html>
