@@ -443,7 +443,28 @@
             alert(`✅ આઈડી સફળતાપૂર્વક Active થઈ ગયું છે! કુલ લિમિટ હવે ₹${newLimit.toLocaleString()} થઈ ગઈ છે.`);
             closeAdminModal();
             location.reload();
+        } function fallbackCopyText(text) {
+        let tempInput = document.createElement("input");
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+            document.execCommand('copy');
+            alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
+        } catch (err) {
+            alert("❌ લિંક કોપી કરવામાં નિષ્ફળ!");
         }
+        document.body.removeChild(tempInput);
+    }
+
+    // 100% કામ કરે તેવું વોટ્સએપ શેર ફંક્શન
+    window.shareOnWhatsApp = function() {
+        if (!currentRefLink) {
+            let user = JSON.parse(localStorage.getItem('evokeUser'));
+            currentRefLink = window.location.origin + "/register.html?ref=ET" + (user ? user.id : "1001");
+        }
+        const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે અહીં ક્લિક કરો: " + currentRefLink);
+        window.open("https://api.whatsapp.com/send?text=" + waText, '_blank');
     }
 
     function openBankModal() { document.getElementById('bankModal').style.display = 'flex'; }
