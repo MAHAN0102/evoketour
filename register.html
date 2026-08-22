@@ -3,229 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evoke Tour - Dashboard</title>
+    <title>Evoke Tour - Register</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-        
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #fdfbf7 0%, #f4e8c1 100%);
             margin: 0;
-            padding: 15px;
-            color: #333;
-        }
-
-        .dashboard-container {
-            max-width: 480px;
-            margin: 0 auto;
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(197, 160, 89, 0.25);
-            overflow: hidden;
-            border: 1px solid #e6d5b8;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #2c2518, #4a3b22);
-            padding: 15px;
-            text-align: center;
-            border-bottom: 4px solid #d4af37;
-        }
-
-        .header img {
-            width: 140px;
-            height: auto;
-            background: white;
-            padding: 5px 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        .content { padding: 15px; }
-
-        .profile-card {
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
-            color: white;
-            border-radius: 15px;
             padding: 20px;
-            margin-bottom: 15px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.3);
-        }
-        .profile-card h2 { margin: 0 0 5px; font-size: 24px; font-weight: 700; }
-        .profile-card p { margin: 0; font-size: 15px; font-weight: 600; opacity: 0.95; }
-        .profile-card .sub-info { font-size: 13px; margin-top: 8px; opacity: 0.9; }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-
-        .stat-box {
-            background: linear-gradient(135deg, #fffcf5, #fcf4e1);
-            border: 1px solid #d4af37;
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-        }
-        .stat-box h3 { margin: 0; font-size: 13px; color: #666; }
-        .stat-box p { margin: 6px 0 0; font-size: 18px; font-weight: 700; color: #2c2518; }
-
-        .balance-card {
-            background: #4a3b22;
-            color: #f4e8c1;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid #d4af37;
-        }
-        .balance-card h3 { margin: 0 0 15px; font-size: 15px; text-align: center; color: #d4af37; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 8px; }
-        
-        .b-row {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 15px;
-        }
-        .b-row span { font-weight: 600; color: #fff; }
-
-        .chart-card {
-            background: #fffdf9;
-            border: 1px solid #d4af37;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        .chart-card h3 { margin: 0 0 10px; font-size: 15px; color: #2c2518; text-align: center; border-bottom: 2px solid #d4af37; padding-bottom: 5px; }
-        .level-table { width: 100%; font-size: 12px; border-collapse: collapse; text-align: center; }
-        .level-table th { background: #4a3b22; color: #f4e8c1; padding: 6px; }
-        .level-table td { padding: 6px; border-bottom: 1px solid #e6d5b8; color: #333; }
-
-        .action-btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            margin-bottom: 10px;
-            text-decoration: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .btn-cyan { background: #00bcd4; color: white; }
-        .btn-green { background: #25d366; color: white; }
-        .btn-orange { background: #ff9800; color: white; }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            min-height: 100vh;
         }
-        .modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
-        .modal-content input {
+        .reg-container {
+            background: #ffffff;
             width: 100%;
-            padding: 10px;
-            margin: 8px 0 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            max-width: 400px;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(197, 160, 89, 0.25);
+            border: 1px solid #e6d5b8;
             box-sizing: border-box;
+        }
+        h2 { text-align: center; color: #2c2518; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 13px; font-weight: bold; color: #4a3b22; margin-bottom: 5px; }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d4af37;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+            background: #fffcf5;
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(255, 126, 95, 0.3);
+        }
+        .ref-info {
+            background: #fcf4e1;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 13px;
+            color: #2c2518;
+            margin-bottom: 15px;
+            border: 1px dashed #d4af37;
         }
     </style>
 </head>
 <body>
 
-<div class="dashboard-container">
-    <div class="header">
-        <img src="https://raw.githubusercontent.com/MAHAN0102/evoketour/main/1001688572.jpg" alt="Evoke Tour Logo">
+<div class="reg-container">
+    <h2>🌟 Evoke Tour Registration</h2>
+    
+    <div id="sponsorInfoBox" class="ref-info">
+        સ્પોન્સર તપાસી રહ્યા છીએ...
     </div>
 
-    <div class="content">
-        <!-- Profile Card -->
-        <div class="profile-card" id="profileCardBg">
-            <h2 id="dashName">માહિતી આવી રહી છે...</h2>
-            <p id="dashStatusText">(Unactive)</p>
-            <div class="sub-info">ID: <span id="dashId">ET----</span> | Mobile: <span id="dashMobile">----------</span></div>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-box">
-                <h3>👥 ટોટલ ટીમ મેમ્બર</h3>
-                <p id="totalTeam">0</p>
-            </div>
-            <div class="stat-box">
-                <h3>🏆 લેવલ ઇનકમ</h3>
-                <p id="levelIncome">₹ 0</p>
-            </div>
-        </div>
-
-        <div class="balance-card">
-            <h3>🎁 Travel Bonus Balance Sheet</h3>
-            <div class="b-row"><span>Total Limit:</span> <span id="totalLimit">0</span></div>
-            <div class="b-row"><span>Earning:</span> <span id="earningAmount">₹ 0</span></div>
-            <div class="b-row"><span>Remaining Limit:</span> <span id="remainingLimit">0</span></div>
-        </div>
-
-        <!-- લેવલ વાઇઝ કમિશન રિપોર્ટ ટેબલ -->
-        <div class="chart-card">
-            <h3>📊 લેવલ વાઇઝ ટીમ અને બોનસ રિપોર્ટ</h3>
-            <table class="level-table">
-                <tr>
-                    <th>Level</th>
-                    <th>Rate</th>
-                    <th>Team</th>
-                    <th>Payout</th>
-                </tr>
-                <tr><td>Level 1</td><td>₹200</td><td id="l1Count">0</td><td id="l1Pay">₹0</td></tr>
-                <tr><td>Level 2</td><td>₹100</td><td id="l2Count">0</td><td id="l2Pay">₹0</td></tr>
-                <tr><td>Level 3</td><td>₹50</td><td id="l3Count">0</td><td id="l3Pay">₹0</td></tr>
-                <tr><td>Level 4</td><td>₹50</td><td id="l4Count">0</td><td id="l4Pay">₹0</td></tr>
-                <tr><td>Level 5</td><td>₹50</td><td id="l5Count">0</td><td id="l5Pay">₹0</td></tr>
-                <tr><td>Level 6</td><td>₹25</td><td id="l6Count">0</td><td id="l6Pay">₹0</td></tr>
-                <tr><td>Level 7</td><td>₹25</td><td id="l7Count">0</td><td id="l7Pay">₹0</td></tr>
-                <tr><td>Level 8</td><td>₹25</td><td id="l8Count">0</td><td id="l8Pay">₹0</td></tr>
-                <tr><td>Level 9</td><td>₹25</td><td id="l9Count">0</td><td id="l9Pay">₹0</td></tr>
-            </table>
-        </div>
-
-        <button class="action-btn btn-cyan" onclick="openBankModal()">🏦 Bank & KYC Details (બેંક વિગતો)</button>
-        <button class="action-btn btn-orange" onclick="copyRefLink()">📋 Copy Referral Link (લિંક કોપી કરો)</button>
-        <a id="whatsappShare" href="#" target="_blank" class="action-btn btn-green">💬 Share WhatsApp Link (વોટ્સએપ શેર)</a>
+    <div class="form-group">
+        <label>પૂરું નામ (Full Name):</label>
+        <input type="text" id="regName" placeholder="તમારું નામ દાખલ કરો">
     </div>
-</div>
 
-<!-- Bank & KYC Modal -->
-<div class="modal" id="bankModal">
-    <div class="modal-content">
-        <h3 style="color: #2c2518; margin-top: 0;">🏦 Bank & KYC Details</h3>
-        <label style="font-size: 13px; font-weight: bold;">Account Holder Name:</label>
-        <input type="text" id="accName" placeholder="બેંક ખાતા મુજબ નામ">
-        
-        <label style="font-size: 13px; font-weight: bold;">Account Number:</label>
-        <input type="text" id="accNo" placeholder="ખાતા નંબર દાખલ કરો">
-        
-        <label style="font-size: 13px; font-weight: bold;">IFSC Code:</label>
-        <input type="text" id="ifscCode" placeholder="IFSC કોડ દાખલ કરો">
-
-        <button class="action-btn btn-cyan" onclick="saveBankDetails()">સેવ કરો (Save)</button>
-        <button class="action-btn" style="background: #ccc; color: #333;" onclick="closeBankModal()">બંધ કરો (Close)</button>
+    <div class="form-group">
+        <label>મોબાઈલ નંબર (Mobile Number):</label>
+        <input type="text" id="regMobile" maxlength="10" placeholder="10 આંકડાનો નંબર">
     </div>
+
+    <div class="form-group">
+        <label>પાસવર્ડ (Password):</label>
+        <input type="password" id="regPass" placeholder="પાસવર્ડ બનાવો">
+    </div>
+
+    <button class="btn-submit" onclick="registerUser()">રજીસ્ટ્રેશન કરો (Register)</button>
 </div>
 
 <script>
@@ -233,101 +96,64 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltZ2d0aWRlenZmeHhwb3ZmdHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwMzk2MDQsImV4cCI6MjEwMjYxNTYwNH0.R386PRqplXZeJsAZk_kLgCi-MDGzOeaoVdHAB7TGiJ8';
     const myDb = supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function loadDashboard() {
-        let user = JSON.parse(localStorage.getItem('evokeUser'));
+    // URL માંથી ?ref=ET... મેળવો
+    const urlParams = new URLSearchParams(window.location.search);
+    const sponsorRef = urlParams.get('ref') || "ET2"; // જો કોઈ લિંક ન હોય તો ડિફોલ્ટ એડમિન સ્પોન્સર
 
-        if (!user || !user.mobile_number) {
-            alert("કૃપા કરીને પહેલા લોગિન કરો!");
-            window.location.href = "index.html";
+    document.getElementById('sponsorInfoBox').innerText = "સ્પોન્સર ID: " + sponsorRef;
+
+    async function registerUser() {
+        const name = document.getElementById('regName').value.trim();
+        const mobile = document.getElementById('regMobile').value.trim();
+        const password = document.getElementById('regPass').value.trim();
+
+        if (!name || !mobile || !password) {
+            alert("કૃપા કરીને બધી જ વિગતો ભરો!");
             return;
         }
 
-        const { data, error } = await myDb
+        if (mobile.length !== 10) {
+            alert("મોબાઈલ નંબર 10 આંકડાનો હોવો જરૂરી છે.");
+            return;
+        }
+
+        // ચેક કરો કે મોબાઈલ નંબર પહેલેથી રજીસ્ટર્ડ તો નથી ને
+        const { data: existingUser } = await myDb
             .from('users')
             .select('*')
-            .eq('mobile_number', user.mobile_number)
+            .eq('mobile_number', mobile)
             .single();
 
-        if (data) {
-            user = data; 
+        if (existingUser) {
+            alert("❌ આ મોબાઈલ નંબરથી પહેલેથી જ રજીસ્ટ્રેશન થયેલું છે!");
+            return;
         }
 
-        const formattedId = "ET" + (user.id || "1001");
-        document.getElementById('dashName').innerText = user.name || "પાર્ટનર";
-        document.getElementById('dashId').innerText = formattedId;
-        document.getElementById('dashMobile').innerText = user.mobile_number || "----------";
-        
-        let l1 = user.level_1_count || 0;
-        let l2 = user.level_2_count || 0;
-        let l3 = user.level_3_count || 0;
-        let l4 = user.level_4_count || 0;
-        let l5 = user.level_5_count || 0;
-        let l6 = user.level_6_count || 0;
-        let l7 = user.level_7_count || 0;
-        let l8 = user.level_8_count || 0;
-        let l9 = user.level_9_count || 0;
+        // નવું રજીસ્ટ્રેશન સેવ કરો (સંબંધિત sponsor_id સાથે)
+        const { data, error } = await myDb
+            .from('users')
+            .insert([
+                {
+                    name: name,
+                    mobile_number: mobile,
+                    password: password,
+                    sponsor_id: sponsorRef, // જેની લિંક હશે તેનો ID અહીં સેવ થશે જેથી ટીમ બનશે
+                    status: 'Unactive',
+                    total_limit: 30000
+                }
+            ])
+            .select()
+            .single();
 
-        let p1 = l1 * 200;
-        let p2 = l2 * 100;
-        let p3 = l3 * 50;
-        let p4 = l4 * 50;
-        let p5 = l5 * 50;
-        let p6 = l6 * 25;
-        let p7 = l7 * 25;
-        let p8 = l8 * 25;
-        let p9 = l9 * 25;
-
-        let totalTeamCount = l1 + l2 + l3 + l4 + l5 + l6 + l7 + l8 + l9;
-        let calculatedEarning = p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
-
-        document.getElementById('totalTeam').innerText = totalTeamCount;
-
-        document.getElementById('l1Count').innerText = l1; document.getElementById('l1Pay').innerText = "₹" + p1;
-        document.getElementById('l2Count').innerText = l2; document.getElementById('l2Pay').innerText = "₹" + p2;
-        document.getElementById('l3Count').innerText = l3; document.getElementById('l3Pay').innerText = "₹" + p3;
-        document.getElementById('l4Count').innerText = l4; document.getElementById('l4Pay').innerText = "₹" + p4;
-        document.getElementById('l5Count').innerText = l5; document.getElementById('l5Pay').innerText = "₹" + p5;
-        document.getElementById('l6Count').innerText = l6; document.getElementById('l6Pay').innerText = "₹" + p6;
-        document.getElementById('l7Count').innerText = l7; document.getElementById('l7Pay').innerText = "₹" + p7;
-        document.getElementById('l8Count').innerText = l8; document.getElementById('l8Pay').innerText = "₹" + p8;
-        document.getElementById('l9Count').innerText = l9; document.getElementById('l9Pay').innerText = "₹" + p9;
-
-        if (user.status === "Active") {
-            document.getElementById('dashStatusText').innerText = "(Active)";
-            document.getElementById('profileCardBg').style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
-            
-            document.getElementById('totalLimit').innerText = "₹ 30,000";
-            document.getElementById('levelIncome').innerText = "₹ " + calculatedEarning;
-            document.getElementById('earningAmount').innerText = "₹ " + calculatedEarning;
-            document.getElementById('remainingLimit').innerText = "₹ " + (30000 - calculatedEarning);
+        if (error) {
+            alert("❌ રજીસ્ટ્રેશનમાં ભૂલ: " + error.message);
         } else {
-            document.getElementById('dashStatusText').innerText = "(Unactive)";
-            document.getElementById('totalLimit').innerText = "0";
-            document.getElementById('levelIncome').innerText = "₹ 0";
-            document.getElementById('earningAmount').innerText = "₹ 0";
-            document.getElementById('remainingLimit').innerText = "0";
+            alert("✅ અભિનંદન! તમારું રજીસ્ટ્રેશન સફળ થઈ ગયું છે.");
+            localStorage.setItem('evokeUser', JSON.stringify(data));
+            window.location.href = "dashboard.html";
         }
-
-        const refLinkStr = window.location.origin + "/register.html?ref=" + formattedId;
-        const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે ક્લિક કરો: " + refLinkStr);
-        document.getElementById('whatsappShare').href = "https://api.whatsapp.com/send?text=" + waText;
-
-        window.copyRefLink = function() {
-            navigator.clipboard.writeText(refLinkStr);
-            alert("✅ રેફરલ લિંક કોપી થઈ ગઈ છે!");
-        }
-    }
-
-    loadDashboard();
-
-    function openBankModal() { document.getElementById('bankModal').style.display = 'flex'; }
-    function closeBankModal() { document.getElementById('bankModal').style.display = 'none'; }
-    function saveBankDetails() {
-        alert("✅ બેંક અને KYC વિગતો સફળતાપૂર્વક સેવ થઈ ગઈ છે!");
-        closeBankModal();
     }
 </script>
 
 </body>
-                                                           </html>
-                                                           
+</html>
