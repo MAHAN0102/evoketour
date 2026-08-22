@@ -26,20 +26,22 @@
             border: 1px solid #e6d5b8;
         }
 
-        /* લોગો માટે પ્રોફેશનલ વ્હાઇટ બેકગ્રાઉન્ડ હેડર */
         .header {
-            background: #ffffff;
-            padding: 15px;
+            background: #2c2518;
+            padding: 18px;
             text-align: center;
             border-bottom: 4px solid #d4af37;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        .header img {
-            width: 160px;
-            height: auto;
-            display: inline-block;
+        .brand-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f4e8c1;
+            letter-spacing: 1.5px;
+            margin: 0;
         }
+        .brand-title span { color: #ff7e5f; }
 
         .content { padding: 15px; }
 
@@ -172,9 +174,8 @@
 <body>
 
 <div class="dashboard-container">
-    <!-- વ્હાઇટ બેકગ્રાઉન્ડ હેડર અને બ્રાન્ડ લોગો -->
     <div class="header">
-        <img src="https://i.ibb.co/6y185h6/evoke-logo.png" alt="Evoke Tour Logo">
+        <h2 class="brand-title">EVOKE <span>TOUR</span> DASHBOARD</h2>
     </div>
 
     <div class="content">
@@ -236,7 +237,7 @@
         <button class="action-btn btn-cyan" onclick="openBankModal()">🏦 Bank & KYC Details (બેંક વિગતો)</button>
         <button class="action-btn btn-orange" onclick="copyRefLink()">📋 Copy Referral Link (લિંક કોપી કરો)</button>
         <button class="action-btn btn-admin" id="adminActivationBtn" onclick="openAdminModal()">👑 Admin Active Panel (Haresh Patel)</button>
-        <a id="whatsappShare" href="#" target="_blank" class="action-btn btn-green">💬 Share WhatsApp Link (વોટ્સએપ શેર)</a>
+        <button class="action-btn btn-green" onclick="shareOnWhatsApp()">💬 Share WhatsApp Link (વોટ્સએપ શેર)</button>
     </div>
 </div>
 
@@ -275,6 +276,8 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltZ2d0aWRlenZmeHhwb3ZmdHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwMzk2MDQsImV4cCI6MjEwMjYxNTYwNH0.R386PRqplXZeJsAZk_kLgCi-MDGzOeaoVdHAB7TGiJ8';
     const myDb = supabase.createClient(supabaseUrl, supabaseKey);
 
+    let finalRegisterLink = "";
+
     async function loadDashboard() {
         let user = JSON.parse(localStorage.getItem('evokeUser'));
 
@@ -299,12 +302,18 @@
         document.getElementById('dashId').innerText = formattedId;
         document.getElementById('dashMobile').innerText = user.mobile_number || "----------";
         
-        // Haresh Patel માટે જ એડમિન પેનલ બટન
+        // Haresh Patel માટે જ એડમિન બટન
         if (user.name && user.name.toLowerCase().includes("haresh")) {
             document.getElementById('adminActivationBtn').style.display = 'block';
         }
 
-        // ડાયરેક્ટ મેમ્બર્સ (Level 1) ના નામ અને સ્ટેટસ (માત્ર Active મેમ્બર્સની જ ઇનકમ ગણવી)
+        // 100% કન્ફર્મ રજીસ્ટ્રેશન લિંક જનરેશન (ડેશબોર્ડ નહીં જાય)
+        let domain = window.location.origin;
+        if (domain.includes("codepen") || domain.includes("localhost")) {
+            domain = "https://evoke-login.netlify.app"; // લાઈવ નેટલિફાઈ ડોમેન
+        }
+        finalRegisterLink = domain + "/register.html?ref=" + formattedId;
+
         const { data: directMembers, error: dirError } = await myDb
             .from('users')
             .select('name, status, id')
@@ -314,10 +323,13 @@
         directContainer.innerHTML = "";
 
         let activeL1Count = 0;
+        let totalDirectCount = 0;
+
         if (directMembers && directMembers.length > 0) {
+            totalDirectCount = directMembers.length;
             directMembers.forEach(mem => {
                 let isActive = mem.status === "Active";
-                if (isActive) activeL1Count++; // માત્ર Active મેમ્બર્સ જ કમિશનમાં ગણાશે
+                if (isActive) activeL1Count++;
                 
                 let badgeClass = isActive ? "badge-active" : "badge-unactive";
                 let statusText = isActive ? "Active" : "Unactive";
@@ -352,10 +364,10 @@
         let p8 = l8 * 25;
         let p9 = l9 * 25;
 
-        let totalTeamCount = (directMembers ? directMembers.length : 0) + l2 + l3 + l4 + l5 + l6 + l7 + l8 + l9;
+        let totalTeamCount = totalDirectCount + l2 + l3 + l4 + l5 + l6 + l7 + l8 + l9;
         let calculatedEarning = p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
 
-        document.getElementById('directTeamCount').innerText = directMembers ? directMembers.length : 0;
+        document.getElementById('directTeamCount').innerText = totalDirectCount;
         document.getElementById('totalTeam').innerText = totalTeamCount;
 
         document.getElementById('l1Count').innerText = l1; document.getElementById('l1Pay').innerText = "₹" + p1;
@@ -368,13 +380,12 @@
         document.getElementById('l8Count').innerText = l8; document.getElementById('l8Pay').innerText = "₹" + p8;
         document.getElementById('l9Count').innerText = l9; document.getElementById('l9Pay').innerText = "₹" + p9;
 
-        // Active સ્ટેટસ અને બેલેન્સ શીટ (મલ્ટીપલ 30000 લિમિટ સપોર્ટ સાથે)
+        let currentLimit = user.total_limit || 30000;
+
         if (user.status === "Active") {
             document.getElementById('dashStatusText').innerText = "(Active)";
             document.getElementById('profileCardBg').style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
             
-            // જો ડેટાબેઝમાં કુલ લિમિટ સેવ હોય તો તે લેવી, નહીંતર ડિફોલ્ટ 30000
-            let currentLimit = user.total_limit || 30000;
             let currentEarning = calculatedEarning;
             let remaining = currentLimit - currentEarning;
 
@@ -384,23 +395,60 @@
             document.getElementById('remainingLimit').innerText = "₹ " + Math.max(0, remaining).toLocaleString();
         } else {
             document.getElementById('dashStatusText').innerText = "(Unactive)";
-            document.getElementById('totalLimit').innerText = "₹ 30,000";
+            document.getElementById('totalLimit').innerText = "₹ " + currentLimit.toLocaleString();
             document.getElementById('levelIncome').innerText = "₹ 0";
             document.getElementById('earningAmount').innerText = "₹ 0";
-            document.getElementById('remainingLimit').innerText = "₹ 30,000";
-        }
-
-        const refLinkStr = window.location.origin + "/register.html?ref=" + formattedId;
-        const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે ક્લિક કરો: " + refLinkStr);
-        document.getElementById('whatsappShare').href = "https://api.whatsapp.com/send?text=" + waText;
-
-        window.copyRefLink = function() {
-            navigator.clipboard.writeText(refLinkStr);
-            alert("✅ રેફરલ લિંક કોપી થઈ ગઈ છે!");
+            document.getElementById('remainingLimit').innerText = "₹ " + currentLimit.toLocaleString();
         }
     }
 
     loadDashboard();
+
+    // 100% પરફેક્ટ કોપી ફંક્શન
+    window.copyRefLink = function() {
+        if (!finalRegisterLink) {
+            let user = JSON.parse(localStorage.getItem('evokeUser'));
+            let domain = window.location.origin.includes("codepen") ? "https://evoke-login.netlify.app" : window.location.origin;
+            finalRegisterLink = domain + "/register.html?ref=ET" + (user ? user.id : "1001");
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(finalRegisterLink).then(() => {
+                alert("✅ રજીસ્ટ્રેશન લિંક કોપી થઈ ગઈ છે:\n" + finalRegisterLink);
+            }).catch(() => {
+                fallbackCopy(finalRegisterLink);
+            });
+        } else {
+            fallbackCopy(finalRegisterLink);
+        }
+    }
+
+    function fallbackCopy(text) {
+        let tempInput = document.createElement("input");
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+            document.execCommand('copy');
+            alert("✅ રજીસ્ટ્રેશન લિંક કોપી થઈ ગઈ છે:\n" + text);
+        } catch (err) {
+            alert("❌ લિંક કોપી કરવામાં નિષ્ફળ!");
+        }
+        document.body.removeChild(tempInput);
+    }
+
+    // 100% પરફેક્ટ વોટ્સએપ શેર ફંક્શન
+    window.shareOnWhatsApp = function() {
+        if (!finalRegisterLink) {
+            let user = JSON.parse(localStorage.getItem('evokeUser'));
+            let domain = window.location.origin.includes("codepen") ? "https://evoke-login.netlify.app" : window.location.origin;
+            finalRegisterLink = domain + "/register.html?ref=ET" + (user ? user.id : "1001");
+        }
+        
+        let message = "🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! રજીસ્ટ્રેશન કરવા માટે અહીં ક્લિક કરો: " + finalRegisterLink;
+        let whatsappUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
+        window.open(whatsappUrl, '_blank');
+    }
 
     // એડમિન એક્ટિવેશન મોડલ
     function openAdminModal() {
@@ -420,7 +468,6 @@
             return;
         }
 
-        // પહેલા યુઝરની હાલની લિમિટ ચેક કરો જેથી 30,000 ના ગુણાંકમાં વધારી શકાય (જેમ કે 30000 -> 60000 -> 90000)
         const { data: targetUser } = await myDb
             .from('users')
             .select('total_limit')
@@ -428,199 +475,4 @@
             .single();
 
         let newLimit = 30000;
-        if (targetUser && targetUser.total_limit) {
-            newLimit = Number(targetUser.total_limit) + 30000;
-        }
-
-        const { data, error } = await myDb
-            .from('users')
-            .update({ status: 'Active', total_limit: newLimit })
-            .eq('mobile_number', mob);
-
-        if (error) {
-            alert("❌ એક્ટિવ કરવામાં ભૂલ: " + error.message);
-        } else {
-            alert(`✅ આઈડી સફળતાપૂર્વક Active થઈ ગયું છે! કુલ લિમિટ હવે ₹${newLimit.toLocaleString()} થઈ ગઈ છે.`);
-            closeAdminModal();
-            location.reload();
-        }
-    }
-
-    function openBankModal() { document.getElementById('bankModal').style.display = 'flex'; }
-    function closeBankModal() { document.getElementById('bankModal').style.display = 'none'; }
-    function saveBankDetails() {
-        alert("✅ બેંક અને KYC વિગતો સફળતાપૂર્વક સેવ થઈ ગઈ છે!");
-        closeBankModal();
-    }
-</script>
-<script>
-    // 100% વર્કિંગ કોપી અને વોટ્સએપ શેર કોડ
-    let currentRefLink = "";
-
-    // જ્યારે ડેશબોર્ડ લોડ થાય ત્યારે યુઝરની લિંક સેટ થઈ જાય
-    function setupReferralLink() {
-        let user = JSON.parse(localStorage.getItem('evokeUser'));
-        if (user && user.id) {
-            let formattedId = "ET" + user.id;
-            currentRefLink = window.location.origin + "/register.html?ref=" + formattedId;
-        } else {
-            currentRefLink = window.location.origin + "/register.html";
-        }
-    }
-
-    // લિંક કોપી કરવા માટેનું ફંક્શન
-    window.copyRefLink = function() {
-        if (!currentRefLink) { setupReferralLink(); }
-
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(currentRefLink).then(() => {
-                alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
-            }).catch(() => {
-                fallbackCopyText(currentRefLink);
-            });
-        } else {
-            fallbackCopyText(currentRefLink);
-        }
-    }
-
-    function fallbackCopyText(text) {
-        let tempInput = document.createElement("input");
-        tempInput.value = text;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        try {
-            document.execCommand('copy');
-            alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
-        } catch (err) {
-            alert("❌ લિંક કોપી કરવામાં નિષ્ફળ!");
-        }
-        document.body.removeChild(tempInput);
-    }
-
-    // વોટ્સએપ પર શેર કરવા માટેનું ફંક્શન
-    window.shareOnWhatsApp = function() {
-        if (!currentRefLink) { setupReferralLink(); }
-        const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે અહીં ક્લિક કરો: " + currentRefLink);
-        window.open("https://api.whatsapp.com/send?text=" + waText, '_blank');
-    }
-
-    // પેજ લોડ થતાની સાથે લિંક સેટ કરવા માટે
-    setupReferralLink();
-</script>
-    <script>
-    let currentRefLink = "";
-
-    function setupReferralLink() {
-        let user = JSON.parse(localStorage.getItem('evokeUser'));
-        if (user && user.id) {
-            let formattedId = "ET" + user.id;
-            // ચોક્કસપણે રજીસ્ટ્રેશન પેજવાળી જ લિંક જનરેટ થશે
-            currentRefLink = window.location.origin + "/register.html?ref=" + formattedId;
-        } else {
-            currentRefLink = window.location.origin + "/register.html";
-        }
-    }
-
-    // લિંક કોપી કરવા માટે
-    window.copyRefLink = function() {
-        if (!currentRefLink) { setupReferralLink(); }
-
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(currentRefLink).then(() => {
-                alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
-            }).catch(() => {
-                fallbackCopyText(currentRefLink);
-            });
-        } else {
-            fallbackCopyText(currentRefLink);
-        }
-    }
-
-    function fallbackCopyText(text) {
-        let tempInput = document.createElement("input");
-        tempInput.value = text;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        try {
-            document.execCommand('copy');
-            alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
-        } catch (err) {
-            alert("❌ લિંક કોપી કરવામાં નિષ્ફળ!");
-        }
-        document.body.removeChild(tempInput);
-    }
-
-    // WhatsApp પર ક્લિક કરતા હવે રજીસ્ટ્રેશન લિંક જ જશે
-    window.shareOnWhatsApp = function() {
-        if (!currentRefLink) { setupReferralLink(); }
-        
-        const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! રજીસ્ટ્રેશન કરવા માટે અહીં ક્લિક કરો: " + currentRefLink);
-        
-        // મોબાઈલ અને ડેસ્કટોપ બંનેમાં WhatsApp ખોલવા માટે સચોટ પદ્ધતિ
-        const whatsappUrl = "https://api.whatsapp.com/send?text=" + waText;
-        window.open(whatsappUrl, '_blank');
-    }
-
-    setupReferralLink();
-                </script>
-    <script>
-    // 100% વર્કિંગ રેફરલ અને વોટ્સએપ શેર ફંક્શન
-    function getRefLink() {
-        let user = JSON.parse(localStorage.getItem('evokeUser'));
-        let userId = (user && user.id) ? user.id : "1001";
-        let formattedId = "ET" + userId;
-        
-        // લાઈવ વેબસાઈટનું બેઝ યુઆરએલ અને સાથે register.html કન્ફર્મ
-        let baseUrl = window.location.origin;
-        if (!baseUrl.includes("http")) {
-            baseUrl = "https://evoke-login.netlify.app"; // તમારી Netlify લિંક
-        }
-        return baseUrl + "/register.html?ref=" + formattedId;
-    }
-
-    // લિંક કોપી કરવા માટે
-    window.copyRefLink = function() {
-        let link = getRefLink();
-        
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(link).then(() => {
-                alert("✅ રેફરલ લિંક કોપી થઈ ગઈ છે:\n" + link);
-            }).catch(() => {
-                fallbackCopy(link);
-            });
-        } else {
-            fallbackCopy(link);
-        }
-    }
-
-    function fallbackCopy(text) {
-        let tempInput = document.createElement("input");
-        tempInput.value = text;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        try {
-            document.execCommand('copy');
-            alert("✅ રેફરલ લિંક કોપી થઈ ગઈ છે:\n" + text);
-        } catch (err) {
-            alert("❌ લિંક કોપી કરવામાં નિષ્ફળ!");
-        }
-        document.body.removeChild(tempInput);
-    }
-
-    // WhatsApp પર શેર કરવા માટે (સીધી WhatsApp App / Web ઓપન કરશે)
-    window.shareOnWhatsApp = function() {
-        let link = getRefLink();
-        let message = "🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! રજીસ્ટ્રેશન કરવા માટે અહીં ક્લિક કરો: " + link;
-        
-        // યુનિવર્સલ વોટ્સએપ શેર લિંક
-        let whatsappUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
-        
-        // નવી ટેબ કે એપમાં ઓપન કરવા માટે
-        let win = window.open(whatsappUrl, '_blank');
-        if (!win) {
-            window.location.href = whatsappUrl;
-        }
-    }
-        </script>
-</body>
-</html>
+    
