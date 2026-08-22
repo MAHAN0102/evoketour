@@ -507,5 +507,61 @@
     // પેજ લોડ થતાની સાથે લિંક સેટ કરવા માટે
     setupReferralLink();
 </script>
+    <script>
+    let currentRefLink = "";
+
+    function setupReferralLink() {
+        let user = JSON.parse(localStorage.getItem('evokeUser'));
+        if (user && user.id) {
+            let formattedId = "ET" + user.id;
+            // ચોક્કસપણે રજીસ્ટ્રેશન પેજવાળી જ લિંક જનરેટ થશે
+            currentRefLink = window.location.origin + "/register.html?ref=" + formattedId;
+        } else {
+            currentRefLink = window.location.origin + "/register.html";
+        }
+    }
+
+    // લિંક કોપી કરવા માટે
+    window.copyRefLink = function() {
+        if (!currentRefLink) { setupReferralLink(); }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(currentRefLink).then(() => {
+                alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
+            }).catch(() => {
+                fallbackCopyText(currentRefLink);
+            });
+        } else {
+            fallbackCopyText(currentRefLink);
+        }
+    }
+
+    function fallbackCopyText(text) {
+        let tempInput = document.createElement("input");
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+            document.execCommand('copy');
+            alert("✅ રેફરલ લિંક સફળતાપૂર્વક કોપી થઈ ગઈ છે!");
+        } catch (err) {
+            alert("❌ લિંક કોપી કરવામાં નિષ્ફળ!");
+        }
+        document.body.removeChild(tempInput);
+    }
+
+    // WhatsApp પર ક્લિક કરતા હવે રજીસ્ટ્રેશન લિંક જ જશે
+    window.shareOnWhatsApp = function() {
+        if (!currentRefLink) { setupReferralLink(); }
+        
+        const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! રજીસ્ટ્રેશન કરવા માટે અહીં ક્લિક કરો: " + currentRefLink);
+        
+        // મોબાઈલ અને ડેસ્કટોપ બંનેમાં WhatsApp ખોલવા માટે સચોટ પદ્ધતિ
+        const whatsappUrl = "https://api.whatsapp.com/send?text=" + waText;
+        window.open(whatsappUrl, '_blank');
+    }
+
+    setupReferralLink();
+                </script>
 </body>
 </html>
