@@ -563,5 +563,64 @@
 
     setupReferralLink();
                 </script>
+    <script>
+    // 100% વર્કિંગ રેફરલ અને વોટ્સએપ શેર ફંક્શન
+    function getRefLink() {
+        let user = JSON.parse(localStorage.getItem('evokeUser'));
+        let userId = (user && user.id) ? user.id : "1001";
+        let formattedId = "ET" + userId;
+        
+        // લાઈવ વેબસાઈટનું બેઝ યુઆરએલ અને સાથે register.html કન્ફર્મ
+        let baseUrl = window.location.origin;
+        if (!baseUrl.includes("http")) {
+            baseUrl = "https://evoke-login.netlify.app"; // તમારી Netlify લિંક
+        }
+        return baseUrl + "/register.html?ref=" + formattedId;
+    }
+
+    // લિંક કોપી કરવા માટે
+    window.copyRefLink = function() {
+        let link = getRefLink();
+        
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(link).then(() => {
+                alert("✅ રેફરલ લિંક કોપી થઈ ગઈ છે:\n" + link);
+            }).catch(() => {
+                fallbackCopy(link);
+            });
+        } else {
+            fallbackCopy(link);
+        }
+    }
+
+    function fallbackCopy(text) {
+        let tempInput = document.createElement("input");
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+            document.execCommand('copy');
+            alert("✅ રેફરલ લિંક કોપી થઈ ગઈ છે:\n" + text);
+        } catch (err) {
+            alert("❌ લિંક કોપી કરવામાં નિષ્ફળ!");
+        }
+        document.body.removeChild(tempInput);
+    }
+
+    // WhatsApp પર શેર કરવા માટે (સીધી WhatsApp App / Web ઓપન કરશે)
+    window.shareOnWhatsApp = function() {
+        let link = getRefLink();
+        let message = "🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! રજીસ્ટ્રેશન કરવા માટે અહીં ક્લિક કરો: " + link;
+        
+        // યુનિવર્સલ વોટ્સએપ શેર લિંક
+        let whatsappUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
+        
+        // નવી ટેબ કે એપમાં ઓપન કરવા માટે
+        let win = window.open(whatsappUrl, '_blank');
+        if (!win) {
+            window.location.href = whatsappUrl;
+        }
+    }
+        </script>
 </body>
 </html>
