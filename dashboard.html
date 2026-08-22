@@ -452,6 +452,39 @@
         alert("✅ બેંક અને KYC વિગતો સફળતાપૂર્વક સેવ થઈ ગઈ છે!");
         closeBankModal();
     }
+    // 100% સાચી રજીસ્ટ્રેશન લિંક જનરેટ કરવા માટે
+function getRegistrationLink() {
+    let user = JSON.parse(localStorage.getItem('evokeUser'));
+    let formattedId = "ET" + (user && user.id ? user.id : "2");
+    
+    // તમારી લાઈવ નેટલિફાઈ વેબસાઈટનું પરફેક્ટ એડ્રેસ
+    let domain = "https://evoke-login.netlify.app"; 
+    return domain + "/register.html?ref=" + formattedId;
+}
+
+window.copyRefLink = function() {
+    let link = getRegistrationLink();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).then(() => {
+            alert("✅ રજીસ્ટ્રેશન લિંક કોપી થઈ ગઈ છે:\n" + link);
+        });
+    } else {
+        let tempInput = document.createElement("input");
+        tempInput.value = link;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        alert("✅ રજીસ્ટ્રેશન લિંક કોપી થઈ ગઈ છે:\n" + link);
+    }
+}
+
+window.shareOnWhatsApp = function() {
+    let link = getRegistrationLink();
+    let message = "🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! રજીસ્ટ્રેશન કરવા માટે અહીં ક્લિક કરો: " + link;
+    let whatsappUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
+    window.open(whatsappUrl, '_blank');
+}
 </script>
 
 </body>
