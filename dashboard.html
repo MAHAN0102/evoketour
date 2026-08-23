@@ -380,7 +380,11 @@
 
         let totalTeamCount = (directMembersList.length) + l2 + l3 + l4 + l5 + l6 + l7 + l8 + l9;
         let calculatedEarning = p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
-
+// કેલ્ક્યુલેટ થયેલું અર્નિંગ Supabase ડેટાબેઝમાં પણ ઓટોમેટિક સેવ કરો
+        await myDb
+            .from('users')
+            .update({ total_earning: calculatedEarning })
+            .eq('mobile_number', user.mobile_number);
         document.getElementById('directTeamCount').innerText = directMembersList.length;
         document.getElementById('totalTeam').innerText = totalTeamCount;
 
