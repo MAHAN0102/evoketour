@@ -482,7 +482,7 @@ window.shareOnWhatsApp = function() {
     let link = getRegistrationLink();
     let message = "🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! રજીસ્ટ્રેશન કરવા માટે અહીં ક્લિક કરો: " + link;
     let whatsappUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
-    window.open(whatsappUrl, '_blank');
+    window.location.href = whatsappUrl;
 }
 </script>
 
