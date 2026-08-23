@@ -487,5 +487,31 @@ window.shareOnWhatsApp = function() {
 }
 </script>
 
-</body>
+</body> 
+    <script>
+    function getRegistrationLink() {
+        let user = JSON.parse(localStorage.getItem('evokeUser'));
+        let userId = (user && user.id) ? user.id : "2"; 
+        let formattedId = "ET" + userId;
+        
+        // ફિક્સ રજીસ્ટ્રેશન લિંક
+        return "https://evoke-login.netlify.app/register.html?ref=" + formattedId;
+    }
+
+    window.copyRefLink = function() {
+        let link = getRegistrationLink();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(link).then(() => {
+                alert("✅ રજીસ્ટ્રેશન લિંક કોપી થઈ ગઈ છે:\n" + link);
+            });
+        }
+    }
+
+    window.shareOnWhatsApp = function() {
+        let link = getRegistrationLink();
+        let message = "🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! રજીસ્ટ્રેશન કરવા માટે અહીં ક્લિક કરો: " + link;
+        let whatsappUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
+        window.open(whatsappUrl, '_blank');
+    }
+    </script>
     </html>
