@@ -143,9 +143,12 @@
                     password: password,
                     sponsor_id: sponsorRef,
                     status: 'Unactive',
-                    total_limit: 0
-                }
-            ])
+                    total_limit: 0,
+                    total_earning: 0,
+                    remaining_limit: 0
+               
+            }
+             ])
             .select()
             .single();
 
