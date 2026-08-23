@@ -259,7 +259,11 @@
         <input type="text" id="actMobile" placeholder="10 આંકડાનો મોબાઈલ નંબર નાખો">
 
         <button class="action-btn btn-green" onclick="executeAdminActivation()">આઈડી Active કરો (+₹30,000 Limit)</button>
-        <button class="action-btn" style="background: #ccc; color: #333;" onclick="closeAdminModal()">બંધ કરો</button>
+        
+        <!-- એક્સેલ ડાઉનલોડ બટન -->
+        <button class="action-btn btn-cyan" style="margin-top: 10px;" onclick="downloadExcelReport()">📊 Download Team Data (Excel)</button>
+        
+        <button class="action-btn" style="background: #ccc; color: #333; margin-top: 10px;" onclick="closeAdminModal()">બંધ કરો</button>
     </div>
 </div>
 
@@ -296,7 +300,7 @@
             document.getElementById('adminActivationBtn').style.display = 'block';
         }
 
-        const { data: allUsers } = await myDb.from('users').select('id, name, status, sponsor_id, user_id_code');
+        const { data: allUsers } = await myDb.from('users').select('id, name, status, sponsor_id, user_id_code, mobile_number, total_earning');
 
         let levelCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
         let directMembersList = [];
@@ -380,16 +384,7 @@
 
         let totalTeamCount = (directMembersList.length) + l2 + l3 + l4 + l5 + l6 + l7 + l8 + l9;
         let calculatedEarning = p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
-       let remainingVal = (user.total_limit || 30000) - calculatedEarning;
-        
-        await myDb
-            .from('users')
-            .update({ 
-                total_earning: calculatedEarning,
-                remaining_limit: remainingVal 
-            })
-            .eq('id', user.id);
-            .eq('mobile_number', user.mobile_number);
+
         document.getElementById('directTeamCount').innerText = directMembersList.length;
         document.getElementById('totalTeam').innerText = totalTeamCount;
 
@@ -402,6 +397,16 @@
         document.getElementById('l7Count').innerText = l7; document.getElementById('l7Pay').innerText = "₹" + p7;
         document.getElementById('l8Count').innerText = l8; document.getElementById('l8Pay').innerText = "₹" + p8;
         document.getElementById('l9Count').innerText = l9; document.getElementById('l9Pay').innerText = "₹" + p9;
+
+        // Supabase માં ડેટાબેઝ ઓટોમેટિક અપડેટ કરવા માટે
+        let remainingVal = (user.total_limit || 30000) - calculatedEarning;
+        await myDb
+            .from('users')
+            .update({ 
+                total_earning: calculatedEarning,
+                remaining_limit: remainingVal 
+            })
+            .eq('mobile_number', user.mobile_number);
 
         if (user.status === "Active" || user.status === "active") {
             document.getElementById('dashStatusText').innerText = "(Active)";
@@ -466,6 +471,40 @@
         }
     }
 
+    // એક્સેલ (.csv) ફાઇલ ડાઉનલોડ કરવા માટેનું પાવરફુલ ફંક્શન
+    async function downloadExcelReport() {
+        const { data: allUsers, error } = await myDb.from('users').select('*');
+        if (error || !allUsers) {
+            alert("❌ ડેટા ડાઉનલોડ કરવામાં ભૂલ આવી!");
+            return;
+        }
+
+        let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+        csvContent += "ID,Name,Mobile,Status,Sponsor ID,Total Earning,Remaining Limit\n";
+
+        allUsers.forEach(u => {
+            let row = [
+                "ET" + u.id,
+                `"${u.name || ''}"`,
+                u.mobile_number || '',
+                u.status || '',
+                u.sponsor_id || '',
+                u.total_earning || 0,
+                u.remaining_limit || 30000
+            ].join(",");
+            csvContent += row + "\n";
+        });
+
+        let encodedUri = encodeURI(csvContent);
+        let link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "EvokeTour_Team_Report.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        alert("✅ એક્સેલ રિપોર્ટ સફળતાપૂર્વક ડાઉનલોડ થઈ ગયો છે!");
+    }
+
     function openBankModal() { document.getElementById('bankModal').style.display = 'flex'; }
     function closeBankModal() { document.getElementById('bankModal').style.display = 'none'; }
     function saveBankDetails() {
@@ -482,7 +521,7 @@
     window.copyRefLink = function() {
         let link = getRegistrationLink();
         if (navigator.clipboard && navigator.clipboard.writeText) {
-navigator.clipboard.writeText(link).then(() => {
+            navigator.clipboard.writeText(link).then(() => {
                 alert("✅ રજીસ્ટ્રેશન લિંક કોપી થઈ ગઈ છે:\n" + link);
             });
         } else {
@@ -513,4 +552,4 @@ navigator.clipboard.writeText(link).then(() => {
 </body>
 </html>
 
-        
+               
