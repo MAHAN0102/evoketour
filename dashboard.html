@@ -26,7 +26,6 @@
             border: 1px solid #e6d5b8;
         }
 
-        /* લોગો માટે પ્રોફેશનલ વ્હાઇટ બેકગ્રાઉન્ડ હેડર */
         .header {
             background: #ffffff;
             padding: 15px;
@@ -172,13 +171,11 @@
 <body>
 
 <div class="dashboard-container">
-    <!-- વ્હાઇટ બેકગ્રાઉન્ડ હેડર અને બ્રાન્ડ લોગો -->
     <div class="header">
         <img src="https://i.ibb.co/6y185h6/evoke-logo.png" alt="Evoke Tour Logo">
     </div>
 
     <div class="content">
-        <!-- Profile Card -->
         <div class="profile-card" id="profileCardBg">
             <h2 id="dashName">માહિતી આવી રહી છે...</h2>
             <p id="dashStatusText">(Unactive)</p>
@@ -203,7 +200,6 @@
             <div class="b-row"><span>Remaining Limit:</span> <span id="remainingLimit">₹ 30,000</span></div>
         </div>
 
-        <!-- લેવલ વાઇઝ કમિશન રિપોર્ટ ટેબલ -->
         <div class="chart-card">
             <h3>📊 લેવલ વાઇઝ ટીમ અને બોનસ રિપોર્ટ</h3>
             <table class="level-table">
@@ -225,7 +221,6 @@
             </table>
         </div>
 
-        <!-- ડાયરેક્ટ ટીમ મેમ્બર્સની યાદી -->
         <div class="team-list-box">
             <h3>📋 તમારા ડાયરેક્ટ મેમ્બર્સ (Direct Members)</h3>
             <div id="directMembersContainer">
@@ -240,7 +235,6 @@
     </div>
 </div>
 
-<!-- Bank & KYC Modal -->
 <div class="modal" id="bankModal">
     <div class="modal-content">
         <h3 style="color: #2c2518; margin-top: 0;">🏦 Bank & KYC Details</h3>
@@ -258,7 +252,6 @@
     </div>
 </div>
 
-<!-- Admin Activation Modal -->
 <div class="modal" id="adminModal">
     <div class="modal-content">
         <h3 style="color: #d32f2f; margin-top: 0;">👑 Admin Activation Panel</h3>
@@ -284,41 +277,155 @@
             return;
         }
 
-        const { data, error } = await myDb
+        const { data: freshUser } = await myDb
             .from('users')
             .select('*')
             .eq('mobile_number', user.mobile_number)
             .single();
 
-        if (data) {
-            user = data; 
+        if (freshUser) {
+            user = freshUser; 
         }
 
-        const formattedId = "ET" + (user.id || "1001");
+        const formattedId = "ET" + (user.id || "2");
         document.getElementById('dashName').innerText = user.name || "પાર્ટનર";
         document.getElementById('dashId').innerText = formattedId;
         document.getElementById('dashMobile').innerText = user.mobile_number || "----------";
         
-        // Haresh Patel માટે જ એડમિન પેનલ બટન
         if (user.name && user.name.toLowerCase().includes("haresh")) {
             document.getElementById('adminActivationBtn').style.display = 'block';
         }
 
-        // ડાયરેક્ટ મેમ્બર્સ (Level 1) ના નામ અને સ્ટેટસ (માત્ર Active મેમ્બર્સની જ ઇનકમ ગણવી)
-        const { data: directMembers, error: dirError } = await myDb
-            .from('users')
-            .select('name, status, id')
-            .eq('sponsor_id', formattedId);
+        // આખું ડાઉનલાઈન ટ્રી ગણવા માટે બધા જ યૂઝર્સનો ડેટા ફેચ કરો
+        const { data: allUsers } = await myDb.from('users').select('id, name, status, sponsor_id');
 
+        // 1 થી 9 લેવલ ઓટોમેટિક કેલ્ક્યુલેટ કરવાનું લોજિક
+        let levelCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
+        let directMembersList = [];
+
+        if (allUsers) {
+            // લેવલ 1 (ડાયરેક્ટ સ્પોન્સર) શોધો
+            let l1CurrentIds = [];
+            allUsers.forEach(u => {
+                if (u.sponsor_id === formattedId) {
+                    directMembersList.push(u);
+                    if (u.status === "Active") {
+                        levelCounts[1]++;
+                        l1CurrentIds.push("ET" + u.id);
+                    }
+                }
+            });
+
+            // લેવલ 2
+            let l2CurrentIds = [];
+            if (l1CurrentIds.length > 0) {
+                allUsers.forEach(u => {
+                    if (l1CurrentIds.includes(u.sponsor_id)) {
+                        if (u.status === "Active") {
+                            levelCounts[2]++;
+                            l2CurrentIds.push("ET" + u.id);
+                        }
+                    }
+                });
+            }
+
+            // લેવલ 3
+            let l3CurrentIds = [];
+            if (l2CurrentIds.length > 0) {
+                allUsers.forEach(u => {
+                    if (l2CurrentIds.includes(u.sponsor_id)) {
+                        if (u.status === "Active") {
+                            levelCounts[3]++;
+                            l3CurrentIds.push("ET" + u.id);
+                        }
+                    }
+                });
+            }
+
+            // લેવલ 4
+            let l4CurrentIds = [];
+            if (l3CurrentIds.length > 0) {
+                allUsers.forEach(u => {
+                    if (l3CurrentIds.includes(u.sponsor_id)) {
+                        if (u.status === "Active") {
+                            levelCounts[4]++;
+                            l4CurrentIds.push("ET" + u.id);
+                        }
+                    }
+                });
+            }
+
+            // લેવલ 5
+            let l5CurrentIds = [];
+            if (l4CurrentIds.length > 0) {
+                allUsers.forEach(u => {
+                    if (l4CurrentIds.includes(u.sponsor_id)) {
+                        if (u.status === "Active") {
+                            levelCounts[5]++;
+                            l5CurrentIds.push("ET" + u.id);
+                        }
+                    }
+                });
+            }
+
+            // લેવલ 6
+            let l6CurrentIds = [];
+            if (l5CurrentIds.length > 0) {
+                allUsers.forEach(u => {
+                    if (l5CurrentIds.includes(u.sponsor_id)) {
+                        if (u.status === "Active") {
+                            levelCounts[6]++;
+                            l6CurrentIds.push("ET" + u.id);
+                        }
+                    }
+                });
+            }
+
+            // લેવલ 7
+            let l7CurrentIds = [];
+            if (l6CurrentIds.length > 0) {
+                allUsers.forEach(u => {
+                    if (l6CurrentIds.includes(u.sponsor_id)) {
+                        if (u.status === "Active") {
+                            levelCounts[7]++;
+                            l7CurrentIds.push("ET" + u.id);
+                        }
+                    }
+                });
+            }
+
+            // લેવલ 8
+            let l8CurrentIds = [];
+            if (l7CurrentIds.length > 0) {
+                allUsers.forEach(u => {
+                    if (l7CurrentIds.includes(u.sponsor_id)) {
+                        if (u.status === "Active") {
+                            levelCounts[8]++;
+                            l8CurrentIds.push("ET" + u.id);
+                        }
+                    }
+                });
+            }
+
+            // લેવල් 9
+            if (l8CurrentIds.length > 0) {
+                allUsers.forEach(u => {
+                    if (l8CurrentIds.includes(u.sponsor_id)) {
+                        if (u.status === "Active") {
+                            levelCounts[9]++;
+                        }
+                    }
+                });
+            }
+        }
+
+        // ડાયરેક્ટ મેમ્બર્સ લિસ્ટ પ્રદર્શિત કરો
         let directContainer = document.getElementById('directMembersContainer');
         directContainer.innerHTML = "";
 
-        let activeL1Count = 0;
-        if (directMembers && directMembers.length > 0) {
-            directMembers.forEach(mem => {
+        if (directMembersList.length > 0) {
+            directMembersList.forEach(mem => {
                 let isActive = mem.status === "Active";
-                if (isActive) activeL1Count++; // માત્ર Active મેમ્બર્સ જ કમિશનમાં ગણાશે
-                
                 let badgeClass = isActive ? "badge-active" : "badge-unactive";
                 let statusText = isActive ? "Active" : "Unactive";
                 directContainer.innerHTML += `
@@ -332,15 +439,15 @@
             directContainer.innerHTML = `<p style="text-align: center; font-size: 12px; color: #777; margin: 5px 0;">હજુ કોઈ ડાયરેક્ટ મેમ્બર નથી.</p>`;
         }
 
-        let l1 = activeL1Count;
-        let l2 = user.level_2_count || 0;
-        let l3 = user.level_3_count || 0;
-        let l4 = user.level_4_count || 0;
-        let l5 = user.level_5_count || 0;
-        let l6 = user.level_6_count || 0;
-        let l7 = user.level_7_count || 0;
-        let l8 = user.level_8_count || 0;
-        let l9 = user.level_9_count || 0;
+        let l1 = levelCounts[1];
+        let l2 = levelCounts[2];
+        let l3 = levelCounts[3];
+        let l4 = levelCounts[4];
+        let l5 = levelCounts[5];
+        let l6 = levelCounts[6];
+        let l7 = levelCounts[7];
+        let l8 = levelCounts[8];
+        let l9 = levelCounts[9];
 
         let p1 = l1 * 200;
         let p2 = l2 * 100;
@@ -352,10 +459,10 @@
         let p8 = l8 * 25;
         let p9 = l9 * 25;
 
-        let totalTeamCount = (directMembers ? directMembers.length : 0) + l2 + l3 + l4 + l5 + l6 + l7 + l8 + l9;
+        let totalTeamCount = (directMembersList.length) + l2 + l3 + l4 + l5 + l6 + l7 + l8 + l9;
         let calculatedEarning = p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
 
-        document.getElementById('directTeamCount').innerText = directMembers ? directMembers.length : 0;
+        document.getElementById('directTeamCount').innerText = directMembersList.length;
         document.getElementById('totalTeam').innerText = totalTeamCount;
 
         document.getElementById('l1Count').innerText = l1; document.getElementById('l1Pay').innerText = "₹" + p1;
@@ -368,132 +475,18 @@
         document.getElementById('l8Count').innerText = l8; document.getElementById('l8Pay').innerText = "₹" + p8;
         document.getElementById('l9Count').innerText = l9; document.getElementById('l9Pay').innerText = "₹" + p9;
 
-        // Active સ્ટેટસ અને બેલેન્સ શીટ (મલ્ટીપલ 30000 લિમિટ સપોર્ટ સાથે)
         if (user.status === "Active") {
             document.getElementById('dashStatusText').innerText = "(Active)";
             document.getElementById('profileCardBg').style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
             
-            // જો ડેટાબેઝમાં કુલ લિમિટ સેવ હોય તો તે લેવી, નહીંતર ડિફોલ્ટ 30000
             let currentLimit = user.total_limit || 30000;
             let currentEarning = calculatedEarning;
             let remaining = currentLimit - currentEarning;
 
             document.getElementById('totalLimit').innerText = "₹ " + currentLimit.toLocaleString();
-            document.getElementById('levelIncome').innerText = "₹ " + currentEarning.toLocaleString();
             document.getElementById('earningAmount').innerText = "₹ " + currentEarning.toLocaleString();
             document.getElementById('remainingLimit').innerText = "₹ " + Math.max(0, remaining).toLocaleString();
         } else {
             document.getElementById('dashStatusText').innerText = "(Unactive)";
             document.getElementById('totalLimit').innerText = "₹ 30,000";
-            document.getElementById('levelIncome').innerText = "₹ 0";
-            document.getElementById('earningAmount').innerText = "₹ 0";
-            document.getElementById('remainingLimit').innerText = "₹ 30,000";
-        }
-
-        const refLinkStr = window.location.origin + "/register.html?ref=" + formattedId;
-        const waText = encodeURIComponent("🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! મારી લિંકથી જોડાવવા માટે ક્લિક કરો: " + refLinkStr);
-        document.getElementById('whatsappShare').href = "https://api.whatsapp.com/send?text=" + waText;
-
-        window.copyRefLink = function() {
-            navigator.clipboard.writeText(refLinkStr);
-            alert("✅ રેફરલ લિંક કોપી થઈ ગઈ છે!");
-        }
-    }
-
-    loadDashboard();
-
-    // એડમિન એક્ટિવેશન મોડલ
-    function openAdminModal() {
-        let pass = prompt("એડમિન પાસવર્ડ નાખો (evoke11111):");
-        if (pass === "evoke11111") {
-            document.getElementById('adminModal').style.display = 'flex';
-        } else if (pass !== null) {
-            alert("❌ ખોટો પાસવર્ડ!");
-        }
-    }
-    function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
-
-    async function executeAdminActivation() {
-        const mob = document.getElementById('actMobile').value;
-        if (!mob || mob.length !== 10) {
-            alert("કૃપા કરીને સાચો 10 આંકડાનો મોબાઈલ નંબર નાખો.");
-            return;
-        }
-
-        // પહેલા યુઝરની હાલની લિમિટ ચેક કરો જેથી 30,000 ના ગુણાંકમાં વધારી શકાય (જેમ કે 30000 -> 60000 -> 90000)
-        const { data: targetUser } = await myDb
-            .from('users')
-            .select('total_limit')
-            .eq('mobile_number', mob)
-            .single();
-
-        let newLimit = 30000;
-        if (targetUser && targetUser.total_limit) {
-            newLimit = Number(targetUser.total_limit) + 30000;
-        }
-
-        const { data, error } = await myDb
-            .from('users')
-            .update({ status: 'Active', total_limit: newLimit })
-            .eq('mobile_number', mob);
-
-        if (error) {
-            alert("❌ એક્ટિવ કરવામાં ભૂલ: " + error.message);
-        } else {
-            alert(`✅ આઈડી સફળતાપૂર્વક Active થઈ ગયું છે! કુલ લિમિટ હવે ₹${newLimit.toLocaleString()} થઈ ગઈ છે.`);
-            closeAdminModal();
-            location.reload();
-        }
-    }
-
-    function openBankModal() { document.getElementById('bankModal').style.display = 'flex'; }
-    function closeBankModal() { document.getElementById('bankModal').style.display = 'none'; }
-    function saveBankDetails() {
-        alert("✅ બેંક અને KYC વિગતો સફળતાપૂર્વક સેવ થઈ ગઈ છે!");
-        closeBankModal();
-    }
-    // 100% સાચી રજીસ્ટ્રેશન લિંક જનરેટ કરવા માટે
-  function getRegistrationLink() {
-    let user = JSON.parse(localStorage.getItem('evokeUser'));
-    let formattedId = "ET" + (user && user.id ? user.id : "2");
-    
-    // નવી GitHub Pages લિંક
-    return "https://mahan0102.github.io/evoketour/register.html?ref=" + formattedId;
-    }  
-
-window.copyRefLink = function() {
-    let link = getRegistrationLink();
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(link).then(() => {
-            alert("✅ રજીસ્ટ્રેશન લિંક કોપી થઈ ગઈ છે:\n" + link);
-        });
-    } else {
-        let tempInput = document.createElement("input");
-        tempInput.value = link;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        document.execCommand('copy');
-        document.body.removeChild(tempInput);
-        alert("✅ રજીસ્ટ્રેશન લિંક કોપી થઈ ગઈ છે:\n" + link);
-    }
-}
-
-window.shareOnWhatsApp = function() {
-    let link = getRegistrationLink();
-    let message = "🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! રજીસ્ટ્રેશન કરવા માટે અહીં ક્લિક કરો: " + link;
-    
-    let whatsappUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
-    
-    let tempLink = document.createElement('a');
-    tempLink.href = whatsappUrl;
-    tempLink.target = '_blank';
-    document.body.appendChild(tempLink);
-    tempLink.click();
-    document.body.removeChild(tempLink);
-
-}
-</script>
-
-</body> 
-    
-    </html>
+            document.getElementById('earning
