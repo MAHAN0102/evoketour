@@ -481,14 +481,16 @@ window.copyRefLink = function() {
 window.shareOnWhatsApp = function() {
     let link = getRegistrationLink();
     let message = "🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! રજીસ્ટ્રેશન કરવા માટે અહીં ક્લિક કરો: " + link;
-    window.shareOnWhatsApp = function() {
-    let link = getRegistrationLink();
-    let message = "🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! રજીસ્ટ્રેશન કરવા માટે અહીં ક્લિક કરો: " + link;
     
-    // આ નવી યુનિવર્સલ લાઇન વાપરો
-    let whatsappUrl = "whatsapp://send?text=" + encodeURIComponent(message);
-    window.location.href = whatsappUrl;
-    }
+    let whatsappUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
+    
+    let tempLink = document.createElement('a');
+    tempLink.href = whatsappUrl;
+    tempLink.target = '_blank';
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+
 }
 </script>
 
