@@ -156,6 +156,55 @@
             window.location.href = "dashboard.html";
         }
     }
+    <script>
+    // ૧. ૧૦૦% સાચી રજીસ્ટ્રેશન લિંક મેળવવાનું ફંક્શન
+    function getRegistrationLink() {
+        let user = JSON.parse(localStorage.getItem('evokeUser'));
+        let userId = (user && user.id) ? user.id : "2"; // જો આઈડી ન મળે તો ડિફોલ્ટ 2
+        let formattedId = "ET" + userId;
+        
+        // તમારી સાચી નેટલિફાઈ લિંક
+        return "https://evoke-login.netlify.app/register.html?ref=" + formattedId;
+    }
+
+    // ૨. લિંક કોપી કરવા માટેનું પરફેક્ટ ફંક્શન
+    window.copyRefLink = function() {
+        let link = getRegistrationLink();
+        
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(link).then(() => {
+                alert("✅ રજીસ્ટ્રેશન લિંક કોપી થઈ ગઈ છે:\n" + link);
+            }).catch(() => {
+                fallbackCopy(link);
+            });
+        } else {
+            fallbackCopy(link);
+        }
+    }
+
+    function fallbackCopy(text) {
+        let tempInput = document.createElement("input");
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+            document.execCommand('copy');
+            alert("✅ રજીસ્ટ્રેશન લિંક કોપી થઈ ગઈ છે:\n" + text);
+        } catch (err) {
+            alert("❌ લિંક કોપી કરવામાં નિષ્ફળ!");
+        }
+        document.body.removeChild(tempInput);
+    }
+
+    // ૩. WhatsApp પર શેર કરવા માટેનું ફંક્શન
+    window.shareOnWhatsApp = function() {
+        let link = getRegistrationLink();
+        let message = "🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! રજીસ્ટ્રેશન કરવા માટે અહીં ક્લિક કરો: " + link;
+        
+        let whatsappUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
+        window.open(whatsappUrl, '_blank');
+    }
+</script>
 </script>
 
 </body>
