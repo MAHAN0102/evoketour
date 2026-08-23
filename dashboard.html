@@ -453,14 +453,13 @@
         closeBankModal();
     }
     // 100% સાચી રજીસ્ટ્રેશન લિંક જનરેટ કરવા માટે
-function getRegistrationLink() {
+  function getRegistrationLink() {
     let user = JSON.parse(localStorage.getItem('evokeUser'));
     let formattedId = "ET" + (user && user.id ? user.id : "2");
     
-    // તમારી લાઈવ નેટલિફાઈ વેબસાઈટનું પરફેક્ટ એડ્રેસ
-    let domain = "https://evoke-login.netlify.app"; 
-    return domain + "/register.html?ref=" + formattedId;
-}
+    // નવી GitHub Pages લિંક
+    return "https://mahan0102.github.io/evoketour/register.html?ref=" + formattedId;
+    }  
 
 window.copyRefLink = function() {
     let link = getRegistrationLink();
