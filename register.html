@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Evoke Tour - Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+    // આ લાઈન સૌથી ઉપર મૂકી દેવી
+    localStorage.removeItem('evokeUser');
+
+    const supabaseUrl = 'https://imggtidezvfxxpovftyx.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltZ2d0aWRlenZmeHhwb3ZmdHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwMzk2MDQsImV4cCI6MjEwMjYxNTYwNH0.R386PRqplXZeJsAZk_kLgCi-MDGzOeaoVdHAB7TGiJ8';
+    const myDb = supabase.createClient(supabaseUrl, supabaseKey);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('ref') || 'ET2';
+    document.getElementById('sponsor_id').value = refCode;
+
+    // ... (તારું રજીસ્ટ્રેશન ફંક્શન જે નીચે હોય તે તેમજ રહેવા દેવું)
+</script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
         
