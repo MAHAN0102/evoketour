@@ -158,8 +158,7 @@
             width: 90%;
             max-width: 400px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            max-height: 85vh;
-            overflow-y: auto;
+            box-sizing: border-box;
         }
         .modal-content input {
             width: 100%;
@@ -169,21 +168,6 @@
             border-radius: 6px;
             box-sizing: border-box;
         }
-        
-        /* ID Card Design Inside Modal */
-        .id-card-box {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            border: 2px solid #d4af37;
-            margin-bottom: 15px;
-        }
-        .id-card-box img { width: 120px; margin-bottom: 10px; }
-        .id-card-box h3 { margin: 5px 0; color: #f4e8c1; }
-        .id-card-box p { margin: 3px 0; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -246,7 +230,8 @@
             </div>
         </div>
 
-        <button class="action-btn btn-purple" onclick="openIdCardModal()">🪪 Digital ID Card & Welcome Letter</button>
+        <!-- ડિજિટલ કાર્ડ બટન હટાવીને પાસવર્ડ ચેન્જ બટન મૂક્યું છે -->
+        <button class="action-btn btn-purple" onclick="openPasswordModal()">🔐 Change Password (પાસવર્ડ બદલો)</button>
         <button class="action-btn btn-cyan" onclick="openBankModal()">🏦 Bank & KYC Details (બેંક વિગતો)</button>
         <button class="action-btn btn-orange" onclick="copyRefLink()">📋 Copy Referral Link (લિંક કોપી કરો)</button>
         <button class="action-btn btn-admin" id="adminActivationBtn" onclick="openAdminModal()">👑 Admin Active Panel (Haresh Patel)</button>
@@ -254,27 +239,15 @@
     </div>
 </div>
 
-<!-- Digital ID Card & Welcome Letter Modal -->
-<div class="modal" id="idCardModal">
-    <div class="modal-content" style="text-align: center;">
-        <h3 style="color: #2c2518; margin-top: 0;">🌟 Evoke Tour Partner Card</h3>
-        
-        <div class="id-card-box">
-            <img src="https://i.ibb.co/6y185h6/evoke-logo.png" alt="Logo">
-            <h3 id="cardName">નામ</h3>
-            <p>ID: <span id="cardId">ET----</span></p>
-            <p>Mobile: <span id="cardMobile">----------</span></p>
-            <p>Status: <span id="cardStatus" style="font-weight: bold; color: #a8ffb2;">Unactive</span></p>
-            <hr style="border: 0.5px solid rgba(255,255,255,0.3); margin: 10px 0;">
-            <p style="font-size: 11px; color: #f4e8c1;">Head Office: Morbi, Gujarat | Official Partner</p>
-        </div>
+<!-- Change Password Modal -->
+<div class="modal" id="passwordModal">
+    <div class="modal-content">
+        <h3 style="color: #2c2518; margin-top: 0;">🔐 Change Password</h3>
+        <label style="font-size: 13px; font-weight: bold;">નવો પાસવર્ડ નાખો (New Password):</label>
+        <input type="text" id="newPassword" placeholder="નવો પાસવર્ડ દાખલ કરો">
 
-        <div style="background: #fffcf5; border: 1px solid #d4af37; padding: 12px; border-radius: 10px; font-size: 12px; text-align: left; margin-bottom: 15px; color: #333;">
-            <strong style="color: #d4af37; display: block; text-align: center; margin-bottom: 5px;">📜 Welcome Letter</strong>
-            <p>પ્રિય પાર્ટનર, Evoke Tour ના સફરમાં આપનું હાર્દિક સ્વાગત છે! આપનું આઈડી સફળતાપૂર્વક રજીસ્ટર્ડ થઈ ગયું છે. ટૂર અને ટ્રાવેલના આ અદભુત પ્લેટફોર્મ પર શાનદાર અર્નિંગ અને સફળતા માટે શુભેચ્છાઓ!</p>
-        </div>
-
-        <button class="action-btn btn-cyan" onclick="closeIdCardModal()">બંધ કરો (Close)</button>
+        <button class="action-btn btn-green" onclick="updatePassword()">પાસવર્ડ સેવ કરો (Update)</button>
+        <button class="action-btn" style="background: #ccc; color: #333; margin-top: 10px;" onclick="closePasswordModal()">બંધ કરો</button>
     </div>
 </div>
 
@@ -292,7 +265,7 @@
         <input type="text" id="ifscCode" placeholder="IFSC કોડ દાખલ કરો">
 
         <button class="action-btn btn-cyan" onclick="saveBankDetails()">સેવ કરો (Save)</button>
-        <button class="action-btn" style="background: #ccc; color: #333;" onclick="closeBankModal()">બંધ કરો (Close)</button>
+        <button class="action-btn" style="background: #ccc; color: #333; margin-top: 10px;" onclick="closeBankModal()">બંધ કરો (Close)</button>
     </div>
 </div>
 
@@ -331,6 +304,7 @@
 
         if (freshUser) {
             user = freshUser; 
+            localStorage.setItem('evokeUser', JSON.stringify(user));
         }
 
         const formattedId = "ET" + (user.id || "2");
@@ -338,12 +312,6 @@
         document.getElementById('dashId').innerText = formattedId;
         document.getElementById('dashMobile').innerText = user.mobile_number || "----------";
         
-        // ID Card Data Set
-        document.getElementById('cardName').innerText = user.name || "પાર્ટનર";
-        document.getElementById('cardId').innerText = formattedId;
-        document.getElementById('cardMobile').innerText = user.mobile_number || "----------";
-        document.getElementById('cardStatus').innerText = user.status || "Unactive";
-
         if (user.name && user.name.toLowerCase().includes("haresh")) {
             document.getElementById('adminActivationBtn').style.display = 'block';
         }
@@ -476,8 +444,30 @@
 
     loadDashboard();
 
-    function openIdCardModal() { document.getElementById('idCardModal').style.display = 'flex'; }
-    function closeIdCardModal() { document.getElementById('idCardModal').style.display = 'none'; }
+    // Password Change Functions
+    function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
+    function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; }
+
+    async function updatePassword() {
+        let newPass = document.getElementById('newPassword').value;
+        if (!newPass) {
+            alert("કૃપા કરીને નવો પાસવર્ડ નાખો.");
+            return;
+        }
+
+             let user = JSON.parse(localStorage.getItem('evokeUser'));
+        const { error } = await myDb
+            .from('users')
+            .update({ password: newPass })
+            .eq('mobile_number', user.mobile_number);
+
+        if (error) {
+            alert("❌ પાસવર્ડ બદલવામાં ભૂલ: " + error.message);
+        } else {
+            alert("✅ પાસવર્ડ સફળતાપૂર્વક બદલાઈ ગયો છે અને ડેટાબેઝમાં અપડેટ થઈ ગયો છે!");
+            closePasswordModal();
+        }
+    }
 
     function openAdminModal() {
         let pass = prompt("એડમિન પાસવર્ડ નાખો (evoke11111):");
@@ -599,6 +589,4 @@
 </script>
 
 </body>
-</html>
-
-        
+</html>        
