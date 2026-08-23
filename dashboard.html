@@ -296,138 +296,57 @@
             document.getElementById('adminActivationBtn').style.display = 'block';
         }
 
-        // આખું ડાઉનલાઈન ટ્રી ગણવા માટે બધા જ યૂઝર્સનો ડેટા ફેચ કરો
-        const { data: allUsers } = await myDb.from('users').select('id, name, status, sponsor_id');
+        const { data: allUsers } = await myDb.from('users').select('id, name, status, sponsor_id, user_id_code');
 
-        // 1 થી 9 લેવલ ઓટોમેટિક કેલ્ક્યુલેટ કરવાનું લોજિક
         let levelCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
         let directMembersList = [];
 
+        let myCurrentCodes = [formattedId, "EVK" + user.id, "ET" + user.id, String(user.id)];
+        if (user.user_id_code) myCurrentCodes.push(user.user_id_code);
+
         if (allUsers) {
-            // લેવલ 1 (ડાયરેક્ટ સ્પોન્સર) શોધો
-            let l1CurrentIds = [];
+            let l1CurrentCodes = [];
             allUsers.forEach(u => {
-                if (u.sponsor_id === formattedId) {
+                if (myCurrentCodes.includes(u.sponsor_id)) {
                     directMembersList.push(u);
-                    if (u.status === "Active") {
+                    if (u.status === "Active" || u.status === "active") {
                         levelCounts[1]++;
-                        l1CurrentIds.push("ET" + u.id);
+                        if (u.user_id_code) l1CurrentCodes.push(u.user_id_code);
+                        l1CurrentCodes.push("ET" + u.id);
+                        l1CurrentCodes.push("EVK" + u.id);
+                        l1CurrentCodes.push(String(u.id));
                     }
                 }
             });
 
-            // લેવલ 2
-            let l2CurrentIds = [];
-            if (l1CurrentIds.length > 0) {
-                allUsers.forEach(u => {
-                    if (l1CurrentIds.includes(u.sponsor_id)) {
-                        if (u.status === "Active") {
-                            levelCounts[2]++;
-                            l2CurrentIds.push("ET" + u.id);
+            let currentLevelCodes = l1CurrentCodes;
+            for (let lvl = 2; lvl <= 9; lvl++) {
+                let nextLevelCodes = [];
+                if (currentLevelCodes.length > 0) {
+                    allUsers.forEach(u => {
+                        if (currentLevelCodes.includes(u.sponsor_id)) {
+                            if (u.status === "Active" || u.status === "active") {
+                                levelCounts[lvl]++;
+                                if (u.user_id_code) nextLevelCodes.push(u.user_id_code);
+                                nextLevelCodes.push("ET" + u.id);
+                                nextLevelCodes.push("EVK" + u.id);
+                                nextLevelCodes.push(String(u.id));
+                            }
                         }
-                    }
-                });
-            }
-
-            // લેવલ 3
-            let l3CurrentIds = [];
-            if (l2CurrentIds.length > 0) {
-                allUsers.forEach(u => {
-                    if (l2CurrentIds.includes(u.sponsor_id)) {
-                        if (u.status === "Active") {
-                            levelCounts[3]++;
-                            l3CurrentIds.push("ET" + u.id);
-                        }
-                    }
-                });
-            }
-
-            // લેવલ 4
-            let l4CurrentIds = [];
-            if (l3CurrentIds.length > 0) {
-                allUsers.forEach(u => {
-                    if (l3CurrentIds.includes(u.sponsor_id)) {
-                        if (u.status === "Active") {
-                            levelCounts[4]++;
-                            l4CurrentIds.push("ET" + u.id);
-                        }
-                    }
-                });
-            }
-
-            // લેવલ 5
-            let l5CurrentIds = [];
-            if (l4CurrentIds.length > 0) {
-                allUsers.forEach(u => {
-                    if (l4CurrentIds.includes(u.sponsor_id)) {
-                        if (u.status === "Active") {
-                            levelCounts[5]++;
-                            l5CurrentIds.push("ET" + u.id);
-                        }
-                    }
-                });
-            }
-
-            // લેવલ 6
-            let l6CurrentIds = [];
-            if (l5CurrentIds.length > 0) {
-                allUsers.forEach(u => {
-                    if (l5CurrentIds.includes(u.sponsor_id)) {
-                        if (u.status === "Active") {
-                            levelCounts[6]++;
-                            l6CurrentIds.push("ET" + u.id);
-                        }
-                    }
-                });
-            }
-
-            // લેવલ 7
-            let l7CurrentIds = [];
-            if (l6CurrentIds.length > 0) {
-                allUsers.forEach(u => {
-                    if (l6CurrentIds.includes(u.sponsor_id)) {
-                        if (u.status === "Active") {
-                            levelCounts[7]++;
-                            l7CurrentIds.push("ET" + u.id);
-                        }
-                    }
-                });
-            }
-
-            // લેવલ 8
-            let l8CurrentIds = [];
-            if (l7CurrentIds.length > 0) {
-                allUsers.forEach(u => {
-                    if (l7CurrentIds.includes(u.sponsor_id)) {
-                        if (u.status === "Active") {
-                            levelCounts[8]++;
-                            l8CurrentIds.push("ET" + u.id);
-                        }
-                    }
-                });
-            }
-
-            // લેવල් 9
-            if (l8CurrentIds.length > 0) {
-                allUsers.forEach(u => {
-                    if (l8CurrentIds.includes(u.sponsor_id)) {
-                        if (u.status === "Active") {
-                            levelCounts[9]++;
-                        }
-                    }
-                });
+                    });
+                }
+                currentLevelCodes = nextLevelCodes;
             }
         }
 
-        // ડાયરેક્ટ મેમ્બર્સ લિસ્ટ પ્રદર્શિત કરો
         let directContainer = document.getElementById('directMembersContainer');
         directContainer.innerHTML = "";
 
         if (directMembersList.length > 0) {
             directMembersList.forEach(mem => {
-                let isActive = mem.status === "Active";
+                let isActive = mem.status === "Active" || mem.status === "active";
                 let badgeClass = isActive ? "badge-active" : "badge-unactive";
-                let statusText = isActive ? "Active" : "Unactive";
+                let statusText = isActive ? "Active" : "Pending";
                 directContainer.innerHTML += `
                     <div class="member-item">
                         <span>👤 ${mem.name} (ET${mem.id})</span>
@@ -475,7 +394,7 @@
         document.getElementById('l8Count').innerText = l8; document.getElementById('l8Pay').innerText = "₹" + p8;
         document.getElementById('l9Count').innerText = l9; document.getElementById('l9Pay').innerText = "₹" + p9;
 
-        if (user.status === "Active") {
+        if (user.status === "Active" || user.status === "active") {
             document.getElementById('dashStatusText').innerText = "(Active)";
             document.getElementById('profileCardBg').style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
             
@@ -489,4 +408,100 @@
         } else {
             document.getElementById('dashStatusText').innerText = "(Unactive)";
             document.getElementById('totalLimit').innerText = "₹ 30,000";
-            document.getElementById('earning
+            document.getElementById('earningAmount').innerText = "₹ 0";
+            document.getElementById('remainingLimit').innerText = "₹ 30,000";
+        }
+    }
+
+    loadDashboard();
+
+    function openAdminModal() {
+        let pass = prompt("એડમિન પાસવર્ડ નાખો (evoke11111):");
+        if (pass === "evoke11111") {
+            document.getElementById('adminModal').style.display = 'flex';
+        } else if (pass !== null) {
+            alert("❌ ખોટો પાસવર્ડ!");
+        }
+    }
+    function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
+
+    async function executeAdminActivation() {
+        const mob = document.getElementById('actMobile').value;
+        if (!mob || mob.length !== 10) {
+            alert("કૃપા કરીને સાચો 10 આંકડાનો મોબાઈલ નંબર નાખો.");
+            return;
+        }
+
+        const { data: targetUser } = await myDb
+            .from('users')
+            .select('total_limit')
+            .eq('mobile_number', mob)
+            .single();
+
+        let newLimit = 30000;
+        if (targetUser && targetUser.total_limit) {
+            newLimit = Number(targetUser.total_limit) + 30000;
+        }
+
+        const { data, error } = await myDb
+            .from('users')
+            .update({ status: 'Active', total_limit: newLimit })
+            .eq('mobile_number', mob);
+
+        if (error) {
+            alert("❌ એક્ટિવ કરવામાં ભૂલ: " + error.message);
+        } else {
+            alert(`✅ આઈડી સફળતાપૂર્વક Active થઈ ગયું છે! કુલ લિમિટ હવે ₹${newLimit.toLocaleString()} થઈ ગઈ છે.`);
+            closeAdminModal();
+            location.reload();
+        }
+    }
+
+    function openBankModal() { document.getElementById('bankModal').style.display = 'flex'; }
+    function closeBankModal() { document.getElementById('bankModal').style.display = 'none'; }
+    function saveBankDetails() {
+        alert("✅ બેંક અને KYC વિગતો સફળતાપૂર્વક સેવ થઈ ગઈ છે!");
+        closeBankModal();
+    }
+
+    function getRegistrationLink() {
+        let user = JSON.parse(localStorage.getItem('evokeUser'));
+        let formattedId = "ET" + (user && user.id ? user.id : "2");
+        return "https://mahan0102.github.io/evoketour/register.html?ref=" + formattedId;
+    }  
+
+    window.copyRefLink = function() {
+        let link = getRegistrationLink();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+navigator.clipboard.writeText(link).then(() => {
+                alert("✅ રજીસ્ટ્રેશન લિંક કોપી થઈ ગઈ છે:\n" + link);
+            });
+        } else {
+            let tempInput = document.createElement("input");
+            tempInput.value = link;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert("✅ રજીસ્ટ્રેશન લિંક કોપી થઈ ગઈ છે:\n" + link);
+        }
+    }
+
+    window.shareOnWhatsApp = function() {
+        let link = getRegistrationLink();
+        let message = "🌟 Evoke Tour માં જોડાઓ અને શાનદાર અર્નિંગ કરો! રજીસ્ટ્રેશન કરવા માટે અહીં ક્લિક કરો: " + link;
+        let whatsappUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
+        
+        let tempLink = document.createElement('a');
+        tempLink.href = whatsappUrl;
+        tempLink.target = '_blank';
+        document.body.appendChild(tempLink);
+        tempLink.click();
+        document.body.removeChild(tempLink);
+    }
+</script>
+
+</body>
+</html>
+
+        
