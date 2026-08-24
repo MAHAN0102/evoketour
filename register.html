@@ -156,6 +156,12 @@
             alert("❌ રજીસ્ટ્રેશનમાં ભૂલ: " + error.message);
         } else {
 
+            alert("✅ અભિનંદન! તમારું રજીસ્ટ્રેશન સફળ થઈ ગયું છે.");
+            localStorage.setItem('evokeUser', JSON.stringify(data));
+            window.location.href = "dashboard.html";
+
+        }
+        } else {
             let welcomeMessage = `🎉 અભિનંદન! Evoke Tour માં તમારું સફળતાપૂર્વક રજીસ્ટ્રેશન થઈ ગયું છે.\n\n` +
                                  `👤 નામ: ${name}\n` +
                                  `🆔 તમારું આઈડી: ET${data.id}\n` +
